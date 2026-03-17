@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shop — Porto</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .page-hero {
+      margin-top: calc(var(--bar-h) + var(--nav-h));
+      background: var(--surface-2);
+      padding: 60px 80px 52px;
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: flex-end;
+      justify-content: space-between; gap: 32px;
+    }
+    .page-hero-eyebrow { font-size:10px; letter-spacing:2.5px; text-transform:uppercase; color:var(--ink-3); margin-bottom:12px; }
+    .page-hero-title { font-family:var(--serif); font-size:clamp(32px,4vw,52px); line-height:1.06; color:var(--ink); }
+    .page-hero-title em { font-style:italic; color:var(--accent-dk); }
+    .page-hero-sub { font-size:13px; color:var(--ink-3); font-weight:300; line-height:1.7; max-width:380px; margin-top:12px; }
+    .page-hero-stats { display:flex; gap:36px; flex-shrink:0; }
+    .stat-val { font-family:var(--serif); font-size:28px; color:var(--ink); }
+    .stat-lbl { font-size:10px; letter-spacing:1.2px; text-transform:uppercase; color:var(--ink-3); margin-top:3px; }
+
+    .section-tabs {
+      display:flex; align-items:center; padding:0 80px;
+      background:var(--surface); border-bottom:1px solid var(--border);
+      position:sticky; top:calc(var(--bar-h) + var(--nav-h)); z-index:100;
+      overflow-x:auto; scrollbar-width:none;
+    }
+    .section-tabs::-webkit-scrollbar { display:none; }
+    .tab-btn {
+      display:inline-flex; align-items:center; gap:8px;
+      padding:18px 20px; font-size:13px; font-family:var(--sans); font-weight:400;
+      color:var(--ink-3); background:transparent; border:none;
+      border-bottom:2px solid transparent; cursor:pointer;
+      letter-spacing:.3px; transition:color .2s,border-color .2s;
+      margin-bottom:-1px; white-space:nowrap;
+    }
+    .tab-btn:hover { color:var(--ink); }
+    .tab-btn.active { color:var(--ink); border-bottom-color:var(--ink); font-weight:500; }
+    .tab-badge { background:var(--surface-3); color:var(--ink-3); font-size:10px; padding:2px 7px; border-radius:20px; font-weight:400; }
+    .tab-btn.active .tab-badge { background:var(--ink); color:#fff; }
+
+    .filter-bar {
+      display:flex; align-items:center; justify-content:space-between;
+      padding:14px 80px; border-bottom:1px solid var(--border);
+      background:var(--surface); gap:20px;
+    }
+    .filter-bar-left { display:flex; align-items:center; gap:6px; flex-wrap:wrap; }
+    .filter-btn {
+      display:inline-flex; align-items:center; gap:6px; font-size:12px;
+      font-family:var(--sans); color:var(--ink-2); border:1.5px solid var(--border-md);
+      background:transparent; padding:6px 14px; cursor:pointer;
+      letter-spacing:.3px; transition:all .18s;
+    }
+    .filter-btn:hover, .filter-btn.active { background:var(--ink); color:#fff; border-color:var(--ink); }
+    .filter-bar-right { display:flex; align-items:center; gap:14px; flex-shrink:0; }
+    .results-count { font-size:12px; color:var(--ink-3); }
+
+    .tab-panel { display:none; }
+    .tab-panel.active { display:block; }
+
+    .products-wrap { padding:40px 80px 100px; }
+    .tab-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:1px; background:var(--border); border:1px solid var(--border); }
+    .rank-badge { position:absolute; top:8px; left:8px; width:28px; height:28px; background:var(--accent); color:#fff; font-size:11px; font-weight:700; font-family:var(--sans); border-radius:50%; display:flex; align-items:center; justify-content:center; z-index:3; }
+    .no-results { grid-column:1/-1; text-align:center; padding:80px 0; color:var(--ink-3); font-size:14px; }
+    .no-results i { display:block; font-size:28px; margin-bottom:12px; opacity:.25; }
+
+    @media (max-width:1200px) { .tab-grid { grid-template-columns:repeat(3,1fr); } }
+    @media (max-width:860px) {
+      .page-hero { padding:40px 24px; flex-direction:column; gap:20px; }
+      .section-tabs { padding:0 20px; position:static; }
+      .filter-bar { padding:12px 20px; flex-wrap:wrap; }
+      .products-wrap { padding:24px 20px 60px; }
+      .tab-grid { grid-template-columns:repeat(2,1fr); }
+      .page-hero-stats { gap:20px; }
+    }
+    @media (max-width:560px) { .tab-grid { grid-template-columns:repeat(2,1fr); } }
+  </style>
+</head>
+<body>
+
+<!-- ═══════════ ANNOUNCEMENT BAR ═══════════ -->
+<div class="ann-bar">
+  <div class="ann-track">
+    <span>🔥 New Arrivals Just Dropped</span><span class="ann-dot"></span>
+    <span>⚡ Free Shipping on Orders Above ₹999</span><span class="ann-dot"></span>
+    <span>🏆 Top Rated Shoes of 2025</span><span class="ann-dot"></span>
+    <span>🎁 Use Code PORTO10 for 10% Off</span><span class="ann-dot"></span>
+    <span>🔥 New Arrivals Just Dropped</span><span class="ann-dot"></span>
+    <span>⚡ Free Shipping on Orders Above ₹999</span><span class="ann-dot"></span>
+    <span>🏆 Top Rated Shoes of 2025</span><span class="ann-dot"></span>
+    <span>🎁 Use Code PORTO10 for 10% Off</span>
+  </div>
+</div>
+
+<!-- ═══════════ NAVBAR ═══════════ -->
+<header class="site-nav">
+  <a href="index.html" class="nav-logo">PORTO</a>
+  <nav class="nav-center">
+    <div class="nav-item">
+      <a href="index.html#featured">New &amp; Featured</a>
+      <div class="mega">
+        <div class="mega-col">
+          <h4>Featured</h4>
+          <a href="Products.html?tab=arrivals">New Arrivals</a>
+          <a href="Products.html?tab=bestsellers">Bestsellers</a>
+          <a href="Products.html?tab=under4999">Under ₹4999</a>
+        </div>
+        <div class="mega-col">
+          <h4>Trending</h4>
+          <a href="Products.html?tab=retro">Retro Running</a>
+          <a href="Products.html?tab=airmax">Air Max</a>
+          <a href="Products.html?tab=dunk">Dunk</a>
+        </div>
+        <div class="mega-col">
+          <h4>Sport</h4>
+          <a href="Products.html?tab=running">Running</a>
+          <a href="Products.html?tab=cricket">Cricket</a>
+          <a href="Products.html?tab=football">Football</a>
+        </div>
+      </div>
+    </div>
+    <div class="nav-item">
+      <a href="#">Men</a>
+      <div class="mega">
+        <div class="mega-col">
+          <h4>Shoes</h4>
+          <a href="Products.html?tab=men-running">Running</a>
+          <a href="Products.html?tab=men-training">Training</a>
+          <a href="Products.html?tab=men-basketball">Basketball</a>
+        </div>
+        <div class="mega-col">
+          <h4>Clothing</h4>
+          <a href="Products.html?tab=men-tshirts">T-Shirts</a>
+          <a href="Products.html?tab=men-shorts">Shorts</a>
+          <a href="Products.html?tab=men-jackets">Jackets</a>
+        </div>
+        <div class="mega-col">
+          <h4>Accessories</h4>
+          <a href="Products.html?tab=men-bags">Bags</a>
+          <a href="Products.html?tab=men-caps">Caps</a>
+          <a href="Products.html?tab=men-socks">Socks</a>
+        </div>
+      </div>
+    </div>
+    <div class="nav-item">
+      <a href="#">Women</a>
+      <div class="mega">
+        <div class="mega-col"><h4>Shoes</h4><a href="Products.html?tab=running">Running</a><a href="Products.html?tab=under4999">Lifestyle</a><a href="Products.html?tab=running">Training</a></div>
+        <div class="mega-col"><h4>Clothing</h4><a href="#">Leggings</a><a href="#">Sports Bras</a><a href="#">Hoodies</a></div>
+        <div class="mega-col"><h4>Accessories</h4><a href="#">Backpacks</a><a href="#">Water Bottles</a><a href="#">Caps</a></div>
+      </div>
+    </div>
+    <div class="nav-item">
+      <a href="#">Kids</a>
+      <div class="mega">
+        <div class="mega-col"><h4>Boys</h4><a href="Products.html?tab=running">Shoes</a><a href="#">Clothing</a><a href="#">Accessories</a></div>
+        <div class="mega-col"><h4>Girls</h4><a href="Products.html?tab=under4999">Shoes</a><a href="#">Clothing</a><a href="#">Accessories</a></div>
+      </div>
+    </div>
+    <div class="nav-item">
+      <a href="#">Jordan</a>
+      <div class="mega">
+        <div class="mega-col"><h4>Collections</h4><a href="Products.html?tab=dunk">Air Jordan 1</a><a href="Products.html?tab=dunk">Air Jordan 4</a><a href="Products.html?tab=retro">Retro</a></div>
+        <div class="mega-col"><h4>Shop</h4><a href="Products.html?tab=dunk">Shoes</a><a href="#">Clothing</a><a href="#">Accessories</a></div>
+      </div>
+    </div>
+  </nav>
+  <div class="nav-right">
+    <i class="fa-solid fa-magnifying-glass nav-icon search-toggle"></i>
+    <div class="user-area nav-icon"><i class="fa-regular fa-user"></i><span id="nav-username"></span></div>
+    <i class="fa-regular fa-heart nav-icon fav-toggle"></i>
+    <div class="cart-icon nav-icon cart-toggle"><i class="fa-solid fa-bag-shopping"></i><span class="cart-badge" id="cartcount">0</span></div>
+    <i class="fa-solid fa-bars menu-toggle" id="menuToggle"></i>
+  </div>
+</header>
+
+<!-- Mobile Nav -->
+<div class="nav-links-mobile" id="mobileNav">
+  <a href="index.html">Home</a>
+  <a href="Products.html?tab=arrivals">New Arrivals</a>
+  <a href="Products.html?tab=bestsellers">Bestsellers</a>
+  <a href="Products.html?tab=men-running">Men Running</a>
+  <a href="Products.html?tab=running">Running</a>
+</div>
+
+<!-- ═══════════ PAGE HERO ═══════════ -->
+<div class="page-hero">
+  <div>
+    <p class="page-hero-eyebrow" id="heroEyebrow">Just landed</p>
+    <h1 class="page-hero-title" id="heroTitle">New <em>Arrivals</em></h1>
+    <p class="page-hero-sub" id="heroSub">Fresh drops, bold styles — discover the latest additions before they sell out.</p>
+  </div>
+  <div class="page-hero-stats">
+    <div><div class="stat-val" id="heroStat1">9</div><div class="stat-lbl" id="heroStat1Lbl">New Styles</div></div>
+    <div><div class="stat-val" id="heroStat2">2025</div><div class="stat-lbl" id="heroStat2Lbl">Collection</div></div>
+  </div>
+</div>
+
+<!-- ═══════════ SECTION TABS ═══════════ -->
+<div class="section-tabs">
+  <button class="tab-btn active" data-tab="arrivals">New Arrivals <span class="tab-badge">9</span></button>
+  <button class="tab-btn" data-tab="bestsellers">Bestsellers <span class="tab-badge">9</span></button>
+  <button class="tab-btn" data-tab="under4999">Under ₹4999 <span class="tab-badge">9</span></button>
+  <button class="tab-btn" data-tab="retro">Retro Running <span class="tab-badge">9</span></button>
+  <button class="tab-btn" data-tab="airmax">Air Max <span class="tab-badge">9</span></button>
+  <button class="tab-btn" data-tab="dunk">Dunk <span class="tab-badge">9</span></button>
+  <button class="tab-btn" data-tab="running">Running <span class="tab-badge">9</span></button>
+  <button class="tab-btn" data-tab="cricket">Cricket <span class="tab-badge">9</span></button>
+  <button class="tab-btn" data-tab="football">Football <span class="tab-badge">9</span></button>
+  <button class="tab-btn" data-tab="men-running">Men Running <span class="tab-badge">9</span></button>
+  <button class="tab-btn" data-tab="men-training">Men Training <span class="tab-badge">9</span></button>
+  <button class="tab-btn" data-tab="men-basketball">Men Basketball <span class="tab-badge">9</span></button>
+  <button class="tab-btn" data-tab="men-tshirts">Men T-Shirts <span class="tab-badge">9</span></button>
+  <button class="tab-btn" data-tab="men-shorts">Men Shorts <span class="tab-badge">9</span></button>
+  <button class="tab-btn" data-tab="men-jackets">Men Jackets <span class="tab-badge">9</span></button>
+  <button class="tab-btn" data-tab="men-bags">Men Bags <span class="tab-badge">9</span></button>
+  <button class="tab-btn" data-tab="men-caps">Men Caps <span class="tab-badge">9</span></button>
+  <button class="tab-btn" data-tab="men-socks">Men Socks <span class="tab-badge">9</span></button>
+</div>
+
+<!-- ═══════════ FILTER + SORT BAR ═══════════ -->
+<div class="filter-bar">
+  <div class="filter-bar-left" id="filterBtns">
+    <button class="filter-btn active" data-filter="all">All</button>
+    <button class="filter-btn" data-filter="running">Running</button>
+    <button class="filter-btn" data-filter="lifestyle">Lifestyle</button>
+    <button class="filter-btn" data-filter="training">Training</button>
+    <button class="filter-btn" data-filter="jordan">Jordan</button>
+  </div>
+  <div class="filter-bar-right">
+    <span class="results-count" id="resultsCount">9 products</span>
+    <select class="sort-select" id="sortSelect" style="min-width:150px">
+      <option value="">Sort By</option>
+      <option value="price-low">Price: Low → High</option>
+      <option value="price-high">Price: High → Low</option>
+      <option value="name-az">Name: A → Z</option>
+    </select>
+  </div>
+</div>
+
+<!-- ═══════════ NEW ARRIVALS ═══════════ -->
+<div class="tab-panel active" id="panel-arrivals">
+  <div class="products-wrap"><div class="tab-grid" id="arrivalsGrid">
+    <div class="product-card" data-category="running"><div class="card-img-wrap"><span class="card-badge">New</span><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/runing product1.jpg" alt="Air Max Pulse"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i></div><div class="card-name">Air Max Pulse</div><div class="card-price">₹4,999</div></div></div>
+    <div class="product-card" data-category="running"><div class="card-img-wrap"><span class="card-badge">New</span><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/product2.jpg" alt="Retro Runner"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i></div><div class="card-name">Retro Runner</div><div class="card-price">₹3,499</div></div></div>
+    <div class="product-card" data-category="jordan"><div class="card-img-wrap"><span class="card-badge">New</span><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/product3.jpg" alt="Jordan Street"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div><div class="card-name">Jordan Street</div><div class="card-price">₹6,999</div></div></div>
+    <div class="product-card" data-category="running"><div class="card-img-wrap"><span class="card-badge">New</span><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/product4.jpg" alt="Air Zoom Elite"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i></div><div class="card-name">Air Zoom Elite</div><div class="card-price">₹5,999</div></div></div>
+    <div class="product-card" data-category="training"><div class="card-img-wrap"><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/product5.jpg" alt="Air Flex Pro"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i></div><div class="card-name">Air Flex Pro</div><div class="card-price">₹4,499</div></div></div>
+    <div class="product-card" data-category="lifestyle"><div class="card-img-wrap"><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/product6.jpg" alt="Street Classic"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i></div><div class="card-name">Street Classic</div><div class="card-price">₹4,499</div></div></div>
+    <div class="product-card" data-category="running"><div class="card-img-wrap"><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/product7.jpg" alt="Ultra Speed"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i><i class="fa-regular fa-star"></i></div><div class="card-name">Ultra Speed</div><div class="card-price">₹4,999</div></div></div>
+    <div class="product-card" data-category="training"><div class="card-img-wrap"><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/product8.jpg" alt="Max Trainer"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div><div class="card-name">Max Trainer</div><div class="card-price">₹5,999</div></div></div>
+    <div class="product-card" data-category="lifestyle"><div class="card-img-wrap"><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/product9.jpg" alt="Lite Runner"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i></div><div class="card-name">Lite Runner</div><div class="card-price">₹2,999</div></div></div>
+  </div></div>
+</div>
+
+<!-- ═══════════ BESTSELLERS ═══════════ -->
+<div class="tab-panel" id="panel-bestsellers">
+  <div class="products-wrap"><div class="tab-grid" id="bestsellersGrid">
+    <div class="product-card" data-category="running"><div class="card-img-wrap"><div class="rank-badge">1</div><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/product2.jpg" alt="React Infinity"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div><div class="card-name">React Infinity</div><div class="card-price">₹1,900</div></div></div>
+    <div class="product-card" data-category="running"><div class="card-img-wrap"><div class="rank-badge">2</div><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/product4.jpg" alt="Zoom Fly 5"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div><div class="card-name">Zoom Fly 5</div><div class="card-price">₹1,400</div></div></div>
+    <div class="product-card" data-category="jordan"><div class="card-img-wrap"><div class="rank-badge">3</div><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/product3.jpg" alt="Jordan Street"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div><div class="card-name">Jordan Street</div><div class="card-price">₹6,999</div></div></div>
+    <div class="product-card" data-category="lifestyle"><div class="card-img-wrap"><div class="rank-badge">4</div><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/product6.jpg" alt="Street Classic"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i></div><div class="card-name">Street Classic</div><div class="card-price">₹4,499</div></div></div>
+    <div class="product-card" data-category="running"><div class="card-img-wrap"><div class="rank-badge">5</div><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/runing product1.jpg" alt="Zoom Pegasus"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i></div><div class="card-name">Zoom Pegasus</div><div class="card-price">₹1,500</div></div></div>
+    <div class="product-card" data-category="training"><div class="card-img-wrap"><div class="rank-badge">6</div><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/product8.jpg" alt="Elite Trainer"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i></div><div class="card-name">Elite Trainer</div><div class="card-price">₹1,300</div></div></div>
+    <div class="product-card" data-category="running"><div class="card-img-wrap"><div class="rank-badge">7</div><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/product7.jpg" alt="Ultra Boost X"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i></div><div class="card-name">Ultra Boost X</div><div class="card-price">₹1,600</div></div></div>
+    <div class="product-card" data-category="lifestyle"><div class="card-img-wrap"><div class="rank-badge">8</div><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/product5.jpg" alt="Air Max Pro"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i><i class="fa-regular fa-star"></i></div><div class="card-name">Air Max Pro</div><div class="card-price">₹1,100</div></div></div>
+    <div class="product-card" data-category="training"><div class="card-img-wrap"><div class="rank-badge">9</div><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/product9.jpg" alt="Lite Runner"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i></div><div class="card-name">Lite Runner</div><div class="card-price">₹2,999</div></div></div>
+  </div></div>
+</div>
+
+<!-- ═══════════ UNDER ₹4999 ═══════════ -->
+<div class="tab-panel" id="panel-under4999">
+  <div class="products-wrap"><div class="tab-grid" id="under4999Grid">
+    <div class="product-card" data-category="running"><div class="card-img-wrap"><span class="card-badge">Value</span><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/runing product1.jpg" alt="Zoom Pegasus"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i></div><div class="card-name">Zoom Pegasus</div><div class="card-price">₹1,500</div></div></div>
+    <div class="product-card" data-category="running"><div class="card-img-wrap"><span class="card-badge">Value</span><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/product2.jpg" alt="React Infinity"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div><div class="card-name">React Infinity</div><div class="card-price">₹1,900</div></div></div>
+    <div class="product-card" data-category="running"><div class="card-img-wrap"><span class="card-badge">Value</span><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/product4.jpg" alt="Zoom Fly 5"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div><div class="card-name">Zoom Fly 5</div><div class="card-price">₹1,400</div></div></div>
+    <div class="product-card" data-category="lifestyle"><div class="card-img-wrap"><span class="card-badge">Value</span><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/product5.jpg" alt="Air Max Pro"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i><i class="fa-regular fa-star"></i></div><div class="card-name">Air Max Pro</div><div class="card-price">₹1,100</div></div></div>
+    <div class="product-card" data-category="training"><div class="card-img-wrap"><span class="card-badge">Value</span><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/product8.jpg" alt="Elite Trainer"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i></div><div class="card-name">Elite Trainer</div><div class="card-price">₹1,300</div></div></div>
+    <div class="product-card" data-category="running"><div class="card-img-wrap"><span class="card-badge">Value</span><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/product7.jpg" alt="Ultra Boost X"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i></div><div class="card-name">Ultra Boost X</div><div class="card-price">₹1,600</div></div></div>
+    <div class="product-card" data-category="running"><div class="card-img-wrap"><span class="card-badge">Value</span><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/product3.jpg" alt="Revolution 6"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i></div><div class="card-name">Revolution 6</div><div class="card-price">₹1,700</div></div></div>
+    <div class="product-card" data-category="lifestyle"><div class="card-img-wrap"><span class="card-badge">Value</span><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/product9.jpg" alt="Lite Runner"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i></div><div class="card-name">Lite Runner</div><div class="card-price">₹2,999</div></div></div>
+    <div class="product-card" data-category="lifestyle"><div class="card-img-wrap"><span class="card-badge">Value</span><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/product6.jpg" alt="Street Classic"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i></div><div class="card-name">Street Classic</div><div class="card-price">₹4,499</div></div></div>
+  </div></div>
+</div>
+
+<!-- ═══════════ RETRO RUNNING ═══════════ -->
+<div class="tab-panel" id="panel-retro">
+  <div class="products-wrap"><div class="tab-grid" id="retroGrid">
+    <div class="product-card" data-category="running"><div class="card-img-wrap"><span class="card-badge">Retro</span><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/product2.jpg" alt="Retro Runner"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i></div><div class="card-name">Retro Runner</div><div class="card-price">₹3,499</div></div></div>
+    <div class="product-card" data-category="running"><div class="card-img-wrap"><span class="card-badge">Retro</span><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/runing product1.jpg" alt="Air Max Pulse"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i></div><div class="card-name">Air Max Pulse</div><div class="card-price">₹4,999</div></div></div>
+    <div class="product-card" data-category="lifestyle"><div class="card-img-wrap"><span class="card-badge">Retro</span><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/product6.jpg" alt="Street Classic"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i></div><div class="card-name">Street Classic</div><div class="card-price">₹4,499</div></div></div>
+    <div class="product-card" data-category="running"><div class="card-img-wrap"><span class="card-badge">Retro</span><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/product4.jpg" alt="Zoom Fly 5"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div><div class="card-name">Zoom Fly 5</div><div class="card-price">₹1,400</div></div></div>
+    <div class="product-card" data-category="lifestyle"><div class="card-img-wrap"><span class="card-badge">Retro</span><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/product5.jpg" alt="Air Max Pro"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i><i class="fa-regular fa-star"></i></div><div class="card-name">Air Max Pro</div><div class="card-price">₹1,100</div></div></div>
+    <div class="product-card" data-category="running"><div class="card-img-wrap"><span class="card-badge">Retro</span><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/product3.jpg" alt="Revolution 6"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i></div><div class="card-name">Revolution 6</div><div class="card-price">₹1,700</div></div></div>
+    <div class="product-card" data-category="running"><div class="card-img-wrap"><span class="card-badge">Retro</span><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/product7.jpg" alt="Ultra Speed"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i><i class="fa-regular fa-star"></i></div><div class="card-name">Ultra Speed</div><div class="card-price">₹4,999</div></div></div>
+    <div class="product-card" data-category="running"><div class="card-img-wrap"><span class="card-badge">Retro</span><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/product9.jpg" alt="Lite Runner"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i></div><div class="card-name">Lite Runner</div><div class="card-price">₹2,999</div></div></div>
+    <div class="product-card" data-category="running"><div class="card-img-wrap"><span class="card-badge">Retro</span><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/product8.jpg" alt="Max Trainer"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div><div class="card-name">Max Trainer</div><div class="card-price">₹5,999</div></div></div>
+  </div></div>
+</div>
+
+<!-- ═══════════ AIR MAX ═══════════ -->
+<div class="tab-panel" id="panel-airmax">
+  <div class="products-wrap"><div class="tab-grid" id="airmaxGrid">
+    <div class="product-card" data-category="lifestyle"><div class="card-img-wrap"><span class="card-badge">Air Max</span><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/max1.jpg" alt="Air Max Pro"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i><i class="fa-regular fa-star"></i></div><div class="card-name">Air Max Pro</div><div class="card-price">₹1,100</div></div></div>
+    <div class="product-card" data-category="running"><div class="card-img-wrap"><span class="card-badge">Air Max</span><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/max2.jpg" alt="Air Max Pulse"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i></div><div class="card-name">Air Max Pulse</div><div class="card-price">₹4,999</div></div></div>
+    <div class="product-card" data-category="running"><div class="card-img-wrap"><span class="card-badge">Air Max</span><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/max3.jpg" alt="Air Zoom Elite"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i></div><div class="card-name">Air Zoom Elite</div><div class="card-price">₹5,999</div></div></div>
+    <div class="product-card" data-category="training"><div class="card-img-wrap"><span class="card-badge">Air Max</span><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/max4.jpg" alt="Air Flex Pro"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i></div><div class="card-name">Air Flex Pro</div><div class="card-price">₹4,499</div></div></div>
+    <div class="product-card" data-category="running"><div class="card-img-wrap"><span class="card-badge">Air Max</span><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/max5.jpg" alt="React Infinity"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div><div class="card-name">React Infinity</div><div class="card-price">₹1,900</div></div></div>
+    <div class="product-card" data-category="running"><div class="card-img-wrap"><span class="card-badge">Air Max</span><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/max6.jpg" alt="Ultra Speed"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i><i class="fa-regular fa-star"></i></div><div class="card-name">Ultra Speed</div><div class="card-price">₹4,999</div></div></div>
+    <div class="product-card" data-category="lifestyle"><div class="card-img-wrap"><span class="card-badge">Air Max</span><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/max7.jpg" alt="Street Classic"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i></div><div class="card-name">Street Classic</div><div class="card-price">₹4,499</div></div></div>
+    <div class="product-card" data-category="running"><div class="card-img-wrap"><span class="card-badge">Air Max</span><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/max8.jpg" alt="Revolution 6"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i></div><div class="card-name">Revolution 6</div><div class="card-price">₹1,700</div></div></div>
+    <div class="product-card" data-category="running"><div class="card-img-wrap"><span class="card-badge">Air Max</span><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/max9.jpg" alt="Lite Runner"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i></div><div class="card-name">Lite Runner</div><div class="card-price">₹2,999</div></div></div>
+  </div></div>
+</div>
+
+<!-- ═══════════ DUNK ═══════════ -->
+<div class="tab-panel" id="panel-dunk">
+  <div class="products-wrap"><div class="tab-grid" id="dunkGrid">
+    <div class="product-card" data-category="jordan"><div class="card-img-wrap"><span class="card-badge">Dunk</span><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/dunk1.jpg" alt="Jordan Street"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div><div class="card-name">Jordan Street</div><div class="card-price">₹6,999</div></div></div>
+    <div class="product-card" data-category="lifestyle"><div class="card-img-wrap"><span class="card-badge">Dunk</span><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/dunk2.jpg" alt="Street Classic"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i></div><div class="card-name">Street Classic</div><div class="card-price">₹4,499</div></div></div>
+    <div class="product-card" data-category="jordan"><div class="card-img-wrap"><span class="card-badge">Dunk</span><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/dunk3.jpg" alt="Jordan Low"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i></div><div class="card-name">Jordan Low</div><div class="card-price">₹5,999</div></div></div>
+    <div class="product-card" data-category="jordan"><div class="card-img-wrap"><span class="card-badge">Dunk</span><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/dunk4.jpg" alt="Dunk High"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div><div class="card-name">Dunk High</div><div class="card-price">₹4,999</div></div></div>
+    <div class="product-card" data-category="lifestyle"><div class="card-img-wrap"><span class="card-badge">Dunk</span><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/dunk5.jpg" alt="Dunk Low Pro"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i></div><div class="card-name">Dunk Low Pro</div><div class="card-price">₹3,999</div></div></div>
+    <div class="product-card" data-category="jordan"><div class="card-img-wrap"><span class="card-badge">Dunk</span><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/dunk6.jpg" alt="Jordan Classic"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i></div><div class="card-name">Jordan Classic</div><div class="card-price">₹7,499</div></div></div>
+    <div class="product-card" data-category="jordan"><div class="card-img-wrap"><span class="card-badge">Dunk</span><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/dunk7.jpg" alt="Dunk Retro"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i><i class="fa-regular fa-star"></i></div><div class="card-name">Dunk Retro</div><div class="card-price">₹5,499</div></div></div>
+    <div class="product-card" data-category="lifestyle"><div class="card-img-wrap"><span class="card-badge">Dunk</span><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/dunk8.jpg" alt="Court Legacy"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i></div><div class="card-name">Court Legacy</div><div class="card-price">₹3,499</div></div></div>
+    <div class="product-card" data-category="jordan"><div class="card-img-wrap"><span class="card-badge">Dunk</span><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/dunk9.jpg" alt="Jordan Trainer"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div><div class="card-name">Jordan Trainer</div><div class="card-price">₹4,499</div></div></div>
+  </div></div>
+</div>
+
+<!-- ═══════════ RUNNING ═══════════ -->
+<div class="tab-panel" id="panel-running">
+  <div class="products-wrap"><div class="tab-grid" id="runningGrid">
+    <div class="product-card" data-category="running"><div class="card-img-wrap"><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/running1.jpg" alt="Air Max Pulse"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i></div><div class="card-name">Air Max Pulse</div><div class="card-price">₹4,999</div></div></div>
+    <div class="product-card" data-category="running"><div class="card-img-wrap"><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/running2.jpg" alt="Retro Runner"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i></div><div class="card-name">Retro Runner</div><div class="card-price">₹3,499</div></div></div>
+    <div class="product-card" data-category="running"><div class="card-img-wrap"><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/running3.jpg" alt="Air Zoom Elite"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i></div><div class="card-name">Air Zoom Elite</div><div class="card-price">₹5,999</div></div></div>
+    <div class="product-card" data-category="running"><div class="card-img-wrap"><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/running4.jpg" alt="Ultra Speed"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i><i class="fa-regular fa-star"></i></div><div class="card-name">Ultra Speed</div><div class="card-price">₹4,999</div></div></div>
+    <div class="product-card" data-category="running"><div class="card-img-wrap"><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/running5.jpg" alt="Revolution 6"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i></div><div class="card-name">Revolution 6</div><div class="card-price">₹1,700</div></div></div>
+    <div class="product-card" data-category="running"><div class="card-img-wrap"><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/running6.jpg" alt="Lite Runner"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i></div><div class="card-name">Lite Runner</div><div class="card-price">₹2,999</div></div></div>
+    <div class="product-card" data-category="running"><div class="card-img-wrap"><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/running7.jpg" alt="React Infinity"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div><div class="card-name">React Infinity</div><div class="card-price">₹1,900</div></div></div>
+    <div class="product-card" data-category="running"><div class="card-img-wrap"><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/running8.jpg" alt="Zoom Fly 5"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div><div class="card-name">Zoom Fly 5</div><div class="card-price">₹1,400</div></div></div>
+    <div class="product-card" data-category="running"><div class="card-img-wrap"><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/running9.jpg" alt="Zoom Pegasus"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i></div><div class="card-name">Zoom Pegasus</div><div class="card-price">₹1,500</div></div></div>
+  </div></div>
+</div>
+
+<!-- ═══════════ CRICKET ═══════════ -->
+<div class="tab-panel" id="panel-cricket">
+  <div class="products-wrap"><div class="tab-grid" id="cricketGrid">
+    <div class="product-card" data-category="training"><div class="card-img-wrap"><span class="card-badge">Cricket</span><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/cricket1.jpg" alt="Max Trainer"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div><div class="card-name">Max Trainer</div><div class="card-price">₹5,999</div></div></div>
+    <div class="product-card" data-category="training"><div class="card-img-wrap"><span class="card-badge">Cricket</span><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/cricket2.jpg" alt="Air Flex Pro"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i></div><div class="card-name">Air Flex Pro</div><div class="card-price">₹4,499</div></div></div>
+    <div class="product-card" data-category="training"><div class="card-img-wrap"><span class="card-badge">Cricket</span><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/cricket3.jpg" alt="Cricket Pro Spike"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i></div><div class="card-name">Cricket Pro Spike</div><div class="card-price">₹3,999</div></div></div>
+    <div class="product-card" data-category="running"><div class="card-img-wrap"><span class="card-badge">Cricket</span><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/cricket4.jpg" alt="Speed Grip"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i><i class="fa-regular fa-star"></i></div><div class="card-name">Speed Grip</div><div class="card-price">₹2,999</div></div></div>
+    <div class="product-card" data-category="training"><div class="card-img-wrap"><span class="card-badge">Cricket</span><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/cricket5.jpg" alt="Turf Warrior"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i></div><div class="card-name">Turf Warrior</div><div class="card-price">₹3,499</div></div></div>
+    <div class="product-card" data-category="training"><div class="card-img-wrap"><span class="card-badge">Cricket</span><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/cricket6.jpg" alt="Boundary Runner"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i></div><div class="card-name">Boundary Runner</div><div class="card-price">₹4,999</div></div></div>
+    <div class="product-card" data-category="training"><div class="card-img-wrap"><span class="card-badge">Cricket</span><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/cricket7.jpg" alt="Wicket Keeper"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i></div><div class="card-name">Wicket Keeper</div><div class="card-price">₹3,299</div></div></div>
+    <div class="product-card" data-category="training"><div class="card-img-wrap"><span class="card-badge">Cricket</span><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/cricket8.jpg" alt="Pitch Master"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i><i class="fa-regular fa-star"></i></div><div class="card-name">Pitch Master</div><div class="card-price">₹2,799</div></div></div>
+    <div class="product-card" data-category="training"><div class="card-img-wrap"><span class="card-badge">Cricket</span><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/cricket9.jpg" alt="Elite Spike"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div><div class="card-name">Elite Spike</div><div class="card-price">₹5,499</div></div></div>
+  </div></div>
+</div>
+
+<!-- ═══════════ FOOTBALL ═══════════ -->
+<div class="tab-panel" id="panel-football">
+  <div class="products-wrap"><div class="tab-grid" id="footballGrid">
+    <div class="product-card" data-category="training"><div class="card-img-wrap"><span class="card-badge">Football</span><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/football1.jpg" alt="Ultra Speed"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i><i class="fa-regular fa-star"></i></div><div class="card-name">Ultra Speed</div><div class="card-price">₹4,999</div></div></div>
+    <div class="product-card" data-category="training"><div class="card-img-wrap"><span class="card-badge">Football</span><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/football2.jpg" alt="Air Zoom Elite"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i></div><div class="card-name">Air Zoom Elite</div><div class="card-price">₹5,999</div></div></div>
+    <div class="product-card" data-category="training"><div class="card-img-wrap"><span class="card-badge">Football</span><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/football3.jpg" alt="Predator Grip"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div><div class="card-name">Predator Grip</div><div class="card-price">₹6,499</div></div></div>
+    <div class="product-card" data-category="running"><div class="card-img-wrap"><span class="card-badge">Football</span><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/football4.jpg" alt="Strike Pro"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i></div><div class="card-name">Strike Pro</div><div class="card-price">₹3,999</div></div></div>
+    <div class="product-card" data-category="training"><div class="card-img-wrap"><span class="card-badge">Football</span><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/football5.jpg" alt="Turf King"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i><i class="fa-regular fa-star"></i></div><div class="card-name">Turf King</div><div class="card-price">₹4,499</div></div></div>
+    <div class="product-card" data-category="training"><div class="card-img-wrap"><span class="card-badge">Football</span><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/football6.jpg" alt="Goal Getter"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i></div><div class="card-name">Goal Getter</div><div class="card-price">₹3,499</div></div></div>
+    <div class="product-card" data-category="training"><div class="card-img-wrap"><span class="card-badge">Football</span><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/football7.jpg" alt="Velocity Boot"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i></div><div class="card-name">Velocity Boot</div><div class="card-price">₹5,499</div></div></div>
+    <div class="product-card" data-category="training"><div class="card-img-wrap"><span class="card-badge">Football</span><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/football8.jpg" alt="Pitch Control"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i></div><div class="card-name">Pitch Control</div><div class="card-price">₹2,999</div></div></div>
+    <div class="product-card" data-category="running"><div class="card-img-wrap"><span class="card-badge">Football</span><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/football9.jpg" alt="Sprint Cleat"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div><div class="card-name">Sprint Cleat</div><div class="card-price">₹4,299</div></div></div>
+  </div></div>
+</div>
+
+<!-- ═══════════ MEN RUNNING ═══════════ -->
+<div class="tab-panel" id="panel-men-running">
+  <div class="products-wrap"><div class="tab-grid" id="menRunningGrid">
+    <div class="product-card" data-category="running"><div class="card-img-wrap"><span class="card-badge">Men</span><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/runing product1.jpg" alt="Air Max Pulse"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i></div><div class="card-name">Air Max Pulse</div><div class="card-price">₹4,999</div></div></div>
+    <div class="product-card" data-category="running"><div class="card-img-wrap"><span class="card-badge">Men</span><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/product2.jpg" alt="React Infinity"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div><div class="card-name">React Infinity</div><div class="card-price">₹1,900</div></div></div>
+    <div class="product-card" data-category="running"><div class="card-img-wrap"><span class="card-badge">Men</span><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/product4.jpg" alt="Zoom Fly 5"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div><div class="card-name">Zoom Fly 5</div><div class="card-price">₹1,400</div></div></div>
+    <div class="product-card" data-category="running"><div class="card-img-wrap"><span class="card-badge">Men</span><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/product7.jpg" alt="Ultra Speed"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i><i class="fa-regular fa-star"></i></div><div class="card-name">Ultra Speed</div><div class="card-price">₹4,999</div></div></div>
+    <div class="product-card" data-category="running"><div class="card-img-wrap"><span class="card-badge">Men</span><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/product3.jpg" alt="Revolution 6"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i></div><div class="card-name">Revolution 6</div><div class="card-price">₹1,700</div></div></div>
+    <div class="product-card" data-category="running"><div class="card-img-wrap"><span class="card-badge">Men</span><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/product9.jpg" alt="Lite Runner"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i></div><div class="card-name">Lite Runner</div><div class="card-price">₹2,999</div></div></div>
+    <div class="product-card" data-category="running"><div class="card-img-wrap"><span class="card-badge">Men</span><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/runing product1.jpg" alt="Zoom Pegasus"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i></div><div class="card-name">Zoom Pegasus</div><div class="card-price">₹1,500</div></div></div>
+    <div class="product-card" data-category="running"><div class="card-img-wrap"><span class="card-badge">Men</span><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/product4.jpg" alt="Air Zoom Elite"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i></div><div class="card-name">Air Zoom Elite</div><div class="card-price">₹5,999</div></div></div>
+    <div class="product-card" data-category="running"><div class="card-img-wrap"><span class="card-badge">Men</span><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/product2.jpg" alt="Retro Runner"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i></div><div class="card-name">Retro Runner</div><div class="card-price">₹3,499</div></div></div>
+  </div></div>
+</div>
+
+<!-- ═══════════ MEN TRAINING ═══════════ -->
+<div class="tab-panel" id="panel-men-training">
+  <div class="products-wrap"><div class="tab-grid" id="menTrainingGrid">
+    <div class="product-card" data-category="training"><div class="card-img-wrap"><span class="card-badge">Men</span><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/product8.jpg" alt="Max Trainer"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div><div class="card-name">Max Trainer</div><div class="card-price">₹5,999</div></div></div>
+    <div class="product-card" data-category="training"><div class="card-img-wrap"><span class="card-badge">Men</span><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/product5.jpg" alt="Air Flex Pro"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i></div><div class="card-name">Air Flex Pro</div><div class="card-price">₹4,499</div></div></div>
+    <div class="product-card" data-category="training"><div class="card-img-wrap"><span class="card-badge">Men</span><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/product8.jpg" alt="Elite Trainer"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i></div><div class="card-name">Elite Trainer</div><div class="card-price">₹1,300</div></div></div>
+    <div class="product-card" data-category="training"><div class="card-img-wrap"><span class="card-badge">Men</span><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/product5.jpg" alt="Power Cross"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i><i class="fa-regular fa-star"></i></div><div class="card-name">Power Cross</div><div class="card-price">₹3,999</div></div></div>
+    <div class="product-card" data-category="training"><div class="card-img-wrap"><span class="card-badge">Men</span><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/product7.jpg" alt="Gym Pro"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i></div><div class="card-name">Gym Pro</div><div class="card-price">₹2,999</div></div></div>
+    <div class="product-card" data-category="training"><div class="card-img-wrap"><span class="card-badge">Men</span><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/product4.jpg" alt="Speed Trainer"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i></div><div class="card-name">Speed Trainer</div><div class="card-price">₹4,299</div></div></div>
+    <div class="product-card" data-category="training"><div class="card-img-wrap"><span class="card-badge">Men</span><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/product3.jpg" alt="Flex Trainer"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i></div><div class="card-name">Flex Trainer</div><div class="card-price">₹3,499</div></div></div>
+    <div class="product-card" data-category="training"><div class="card-img-wrap"><span class="card-badge">Men</span><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/product6.jpg" alt="Cross Fit Pro"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i></div><div class="card-name">Cross Fit Pro</div><div class="card-price">₹5,499</div></div></div>
+    <div class="product-card" data-category="training"><div class="card-img-wrap"><span class="card-badge">Men</span><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/product9.jpg" alt="Agility Pro"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i><i class="fa-regular fa-star"></i></div><div class="card-name">Agility Pro</div><div class="card-price">₹3,199</div></div></div>
+  </div></div>
+</div>
+
+<!-- ═══════════ MEN BASKETBALL ═══════════ -->
+<div class="tab-panel" id="panel-men-basketball">
+  <div class="products-wrap"><div class="tab-grid" id="menBasketballGrid">
+    <div class="product-card" data-category="jordan"><div class="card-img-wrap"><span class="card-badge">Men</span><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/product3.jpg" alt="Jordan Street"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div><div class="card-name">Jordan Street</div><div class="card-price">₹6,999</div></div></div>
+    <div class="product-card" data-category="jordan"><div class="card-img-wrap"><span class="card-badge">Men</span><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/product2.jpg" alt="Dunk High"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div><div class="card-name">Dunk High</div><div class="card-price">₹4,999</div></div></div>
+    <div class="product-card" data-category="jordan"><div class="card-img-wrap"><span class="card-badge">Men</span><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/product4.jpg" alt="Court Vision"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i></div><div class="card-name">Court Vision</div><div class="card-price">₹5,499</div></div></div>
+    <div class="product-card" data-category="jordan"><div class="card-img-wrap"><span class="card-badge">Men</span><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/product6.jpg" alt="Air Force 1"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i></div><div class="card-name">Air Force 1</div><div class="card-price">₹7,499</div></div></div>
+    <div class="product-card" data-category="jordan"><div class="card-img-wrap"><span class="card-badge">Men</span><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/runing product1.jpg" alt="Jordan Classic"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i></div><div class="card-name">Jordan Classic</div><div class="card-price">₹8,999</div></div></div>
+    <div class="product-card" data-category="jordan"><div class="card-img-wrap"><span class="card-badge">Men</span><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/product7.jpg" alt="Dunk Retro"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i><i class="fa-regular fa-star"></i></div><div class="card-name">Dunk Retro</div><div class="card-price">₹5,499</div></div></div>
+    <div class="product-card" data-category="jordan"><div class="card-img-wrap"><span class="card-badge">Men</span><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/product9.jpg" alt="Court Legacy"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i></div><div class="card-name">Court Legacy</div><div class="card-price">₹3,499</div></div></div>
+    <div class="product-card" data-category="jordan"><div class="card-img-wrap"><span class="card-badge">Men</span><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/product8.jpg" alt="Hoop Elite"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div><div class="card-name">Hoop Elite</div><div class="card-price">₹6,499</div></div></div>
+    <div class="product-card" data-category="jordan"><div class="card-img-wrap"><span class="card-badge">Men</span><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/product5.jpg" alt="Baseline Pro"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i></div><div class="card-name">Baseline Pro</div><div class="card-price">₹4,299</div></div></div>
+  </div></div>
+</div>
+
+<!-- ═══════════ MEN T-SHIRTS ═══════════ -->
+<div class="tab-panel" id="panel-men-tshirts">
+  <div class="products-wrap"><div class="tab-grid" id="menTshirtsGrid">
+    <div class="product-card" data-category="lifestyle"><div class="card-img-wrap"><span class="card-badge">Men</span><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/product2.jpg" alt="Dri-Fit Tee"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i></div><div class="card-name">Dri-Fit Tee</div><div class="card-price">₹999</div></div></div>
+    <div class="product-card" data-category="lifestyle"><div class="card-img-wrap"><span class="card-badge">Men</span><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/product4.jpg" alt="Sport Tee Pro"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div><div class="card-name">Sport Tee Pro</div><div class="card-price">₹1,299</div></div></div>
+    <div class="product-card" data-category="lifestyle"><div class="card-img-wrap"><span class="card-badge">Men</span><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/product6.jpg" alt="Classic Fit Tee"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i><i class="fa-regular fa-star"></i></div><div class="card-name">Classic Fit Tee</div><div class="card-price">₹799</div></div></div>
+    <div class="product-card" data-category="lifestyle"><div class="card-img-wrap"><span class="card-badge">Men</span><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/product8.jpg" alt="Training Tee"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i></div><div class="card-name">Training Tee</div><div class="card-price">₹1,099</div></div></div>
+    <div class="product-card" data-category="lifestyle"><div class="card-img-wrap"><span class="card-badge">Men</span><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/product3.jpg" alt="Graphic Tee"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i></div><div class="card-name">Graphic Tee</div><div class="card-price">₹899</div></div></div>
+    <div class="product-card" data-category="lifestyle"><div class="card-img-wrap"><span class="card-badge">Men</span><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/product5.jpg" alt="Polo Tee"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i></div><div class="card-name">Polo Tee</div><div class="card-price">₹1,499</div></div></div>
+    <div class="product-card" data-category="lifestyle"><div class="card-img-wrap"><span class="card-badge">Men</span><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/product7.jpg" alt="Slim Fit Tee"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i></div><div class="card-name">Slim Fit Tee</div><div class="card-price">₹999</div></div></div>
+    <div class="product-card" data-category="lifestyle"><div class="card-img-wrap"><span class="card-badge">Men</span><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/product9.jpg" alt="Oversized Tee"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div><div class="card-name">Oversized Tee</div><div class="card-price">₹1,199</div></div></div>
+    <div class="product-card" data-category="lifestyle"><div class="card-img-wrap"><span class="card-badge">Men</span><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/runing product1.jpg" alt="Henley Tee"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i><i class="fa-regular fa-star"></i></div><div class="card-name">Henley Tee</div><div class="card-price">₹1,099</div></div></div>
+  </div></div>
+</div>
+
+<!-- ═══════════ MEN SHORTS ═══════════ -->
+<div class="tab-panel" id="panel-men-shorts">
+  <div class="products-wrap"><div class="tab-grid" id="menShortsGrid">
+    <div class="product-card" data-category="training"><div class="card-img-wrap"><span class="card-badge">Men</span><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/product2.jpg" alt="Running Shorts"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i></div><div class="card-name">Running Shorts</div><div class="card-price">₹1,299</div></div></div>
+    <div class="product-card" data-category="training"><div class="card-img-wrap"><span class="card-badge">Men</span><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/product4.jpg" alt="Gym Shorts"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div><div class="card-name">Gym Shorts</div><div class="card-price">₹999</div></div></div>
+    <div class="product-card" data-category="lifestyle"><div class="card-img-wrap"><span class="card-badge">Men</span><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/product6.jpg" alt="Casual Shorts"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i><i class="fa-regular fa-star"></i></div><div class="card-name">Casual Shorts</div><div class="card-price">₹1,199</div></div></div>
+    <div class="product-card" data-category="training"><div class="card-img-wrap"><span class="card-badge">Men</span><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/product8.jpg" alt="Sport Shorts"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i></div><div class="card-name">Sport Shorts</div><div class="card-price">₹1,499</div></div></div>
+    <div class="product-card" data-category="training"><div class="card-img-wrap"><span class="card-badge">Men</span><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/product3.jpg" alt="Training Shorts"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i></div><div class="card-name">Training Shorts</div><div class="card-price">₹1,099</div></div></div>
+    <div class="product-card" data-category="lifestyle"><div class="card-img-wrap"><span class="card-badge">Men</span><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/product5.jpg" alt="Cargo Shorts"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i></div><div class="card-name">Cargo Shorts</div><div class="card-price">₹1,799</div></div></div>
+    <div class="product-card" data-category="training"><div class="card-img-wrap"><span class="card-badge">Men</span><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/product7.jpg" alt="Compression Shorts"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i></div><div class="card-name">Compression Shorts</div><div class="card-price">₹1,399</div></div></div>
+    <div class="product-card" data-category="lifestyle"><div class="card-img-wrap"><span class="card-badge">Men</span><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/product9.jpg" alt="Beach Shorts"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i><i class="fa-regular fa-star"></i></div><div class="card-name">Beach Shorts</div><div class="card-price">₹1,599</div></div></div>
+    <div class="product-card" data-category="training"><div class="card-img-wrap"><span class="card-badge">Men</span><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/runing product1.jpg" alt="Pro Shorts"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div><div class="card-name">Pro Shorts</div><div class="card-price">₹1,699</div></div></div>
+  </div></div>
+</div>
+
+<!-- ═══════════ MEN JACKETS ═══════════ -->
+<div class="tab-panel" id="panel-men-jackets">
+  <div class="products-wrap"><div class="tab-grid" id="menJacketsGrid">
+    <div class="product-card" data-category="lifestyle"><div class="card-img-wrap"><span class="card-badge">Men</span><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/product3.jpg" alt="Wind Jacket"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i></div><div class="card-name">Wind Jacket</div><div class="card-price">₹2,999</div></div></div>
+    <div class="product-card" data-category="lifestyle"><div class="card-img-wrap"><span class="card-badge">Men</span><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/product5.jpg" alt="Track Jacket"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div><div class="card-name">Track Jacket</div><div class="card-price">₹3,499</div></div></div>
+    <div class="product-card" data-category="lifestyle"><div class="card-img-wrap"><span class="card-badge">Men</span><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/product7.jpg" alt="Rain Jacket"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i><i class="fa-regular fa-star"></i></div><div class="card-name">Rain Jacket</div><div class="card-price">₹4,499</div></div></div>
+    <div class="product-card" data-category="lifestyle"><div class="card-img-wrap"><span class="card-badge">Men</span><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/product9.jpg" alt="Puffer Jacket"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i></div><div class="card-name">Puffer Jacket</div><div class="card-price">₹5,999</div></div></div>
+    <div class="product-card" data-category="lifestyle"><div class="card-img-wrap"><span class="card-badge">Men</span><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/product2.jpg" alt="Fleece Jacket"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i></div><div class="card-name">Fleece Jacket</div><div class="card-price">₹3,999</div></div></div>
+    <div class="product-card" data-category="lifestyle"><div class="card-img-wrap"><span class="card-badge">Men</span><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/product4.jpg" alt="Denim Jacket"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i></div><div class="card-name">Denim Jacket</div><div class="card-price">₹4,999</div></div></div>
+    <div class="product-card" data-category="lifestyle"><div class="card-img-wrap"><span class="card-badge">Men</span><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/product6.jpg" alt="Bomber Jacket"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i><i class="fa-regular fa-star"></i></div><div class="card-name">Bomber Jacket</div><div class="card-price">₹5,499</div></div></div>
+    <div class="product-card" data-category="lifestyle"><div class="card-img-wrap"><span class="card-badge">Men</span><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/product8.jpg" alt="Hoodie Jacket"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div><div class="card-name">Hoodie Jacket</div><div class="card-price">₹2,999</div></div></div>
+    <div class="product-card" data-category="lifestyle"><div class="card-img-wrap"><span class="card-badge">Men</span><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/runing product1.jpg" alt="Sport Jacket"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i></div><div class="card-name">Sport Jacket</div><div class="card-price">₹3,299</div></div></div>
+  </div></div>
+</div>
+
+<!-- ═══════════ MEN BAGS ═══════════ -->
+<div class="tab-panel" id="panel-men-bags">
+  <div class="products-wrap"><div class="tab-grid" id="menBagsGrid">
+    <div class="product-card" data-category="lifestyle"><div class="card-img-wrap"><span class="card-badge">Men</span><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/product2.jpg" alt="Backpack Pro"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i></div><div class="card-name">Backpack Pro</div><div class="card-price">₹2,499</div></div></div>
+    <div class="product-card" data-category="lifestyle"><div class="card-img-wrap"><span class="card-badge">Men</span><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/product4.jpg" alt="Gym Duffel"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div><div class="card-name">Gym Duffel</div><div class="card-price">₹1,999</div></div></div>
+    <div class="product-card" data-category="lifestyle"><div class="card-img-wrap"><span class="card-badge">Men</span><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/product6.jpg" alt="Sling Bag"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i><i class="fa-regular fa-star"></i></div><div class="card-name">Sling Bag</div><div class="card-price">₹1,499</div></div></div>
+    <div class="product-card" data-category="lifestyle"><div class="card-img-wrap"><span class="card-badge">Men</span><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/product8.jpg" alt="Tote Bag"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i></div><div class="card-name">Tote Bag</div><div class="card-price">₹1,299</div></div></div>
+    <div class="product-card" data-category="lifestyle"><div class="card-img-wrap"><span class="card-badge">Men</span><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/product3.jpg" alt="Messenger Bag"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i></div><div class="card-name">Messenger Bag</div><div class="card-price">₹2,199</div></div></div>
+    <div class="product-card" data-category="lifestyle"><div class="card-img-wrap"><span class="card-badge">Men</span><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/product5.jpg" alt="Travel Bag"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i></div><div class="card-name">Travel Bag</div><div class="card-price">₹3,499</div></div></div>
+    <div class="product-card" data-category="lifestyle"><div class="card-img-wrap"><span class="card-badge">Men</span><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/product7.jpg" alt="Mini Backpack"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i></div><div class="card-name">Mini Backpack</div><div class="card-price">₹1,799</div></div></div>
+    <div class="product-card" data-category="lifestyle"><div class="card-img-wrap"><span class="card-badge">Men</span><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/product9.jpg" alt="Waist Bag"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i><i class="fa-regular fa-star"></i></div><div class="card-name">Waist Bag</div><div class="card-price">₹999</div></div></div>
+    <div class="product-card" data-category="lifestyle"><div class="card-img-wrap"><span class="card-badge">Men</span><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/runing product1.jpg" alt="Sport Backpack"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div><div class="card-name">Sport Backpack</div><div class="card-price">₹2,799</div></div></div>
+  </div></div>
+</div>
+
+<!-- ═══════════ MEN CAPS ═══════════ -->
+<div class="tab-panel" id="panel-men-caps">
+  <div class="products-wrap"><div class="tab-grid" id="menCapsGrid">
+    <div class="product-card" data-category="lifestyle"><div class="card-img-wrap"><span class="card-badge">Men</span><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/product2.jpg" alt="Sport Cap"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i></div><div class="card-name">Sport Cap</div><div class="card-price">₹599</div></div></div>
+    <div class="product-card" data-category="lifestyle"><div class="card-img-wrap"><span class="card-badge">Men</span><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/product4.jpg" alt="Snapback Cap"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div><div class="card-name">Snapback Cap</div><div class="card-price">₹799</div></div></div>
+    <div class="product-card" data-category="lifestyle"><div class="card-img-wrap"><span class="card-badge">Men</span><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/product6.jpg" alt="Running Cap"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i><i class="fa-regular fa-star"></i></div><div class="card-name">Running Cap</div><div class="card-price">₹699</div></div></div>
+    <div class="product-card" data-category="lifestyle"><div class="card-img-wrap"><span class="card-badge">Men</span><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/product8.jpg" alt="Bucket Hat"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i></div><div class="card-name">Bucket Hat</div><div class="card-price">₹899</div></div></div>
+    <div class="product-card" data-category="lifestyle"><div class="card-img-wrap"><span class="card-badge">Men</span><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/product3.jpg" alt="Beanie"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i></div><div class="card-name">Beanie</div><div class="card-price">₹499</div></div></div>
+    <div class="product-card" data-category="lifestyle"><div class="card-img-wrap"><span class="card-badge">Men</span><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/product5.jpg" alt="Trucker Cap"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i></div><div class="card-name">Trucker Cap</div><div class="card-price">₹749</div></div></div>
+    <div class="product-card" data-category="lifestyle"><div class="card-img-wrap"><span class="card-badge">Men</span><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/product7.jpg" alt="Dad Cap"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i></div><div class="card-name">Dad Cap</div><div class="card-price">₹649</div></div></div>
+    <div class="product-card" data-category="lifestyle"><div class="card-img-wrap"><span class="card-badge">Men</span><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/product9.jpg" alt="Fitted Cap"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i><i class="fa-regular fa-star"></i></div><div class="card-name">Fitted Cap</div><div class="card-price">₹849</div></div></div>
+    <div class="product-card" data-category="lifestyle"><div class="card-img-wrap"><span class="card-badge">Men</span><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/runing product1.jpg" alt="Visor Cap"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div><div class="card-name">Visor Cap</div><div class="card-price">₹549</div></div></div>
+  </div></div>
+</div>
+
+<!-- ═══════════ MEN SOCKS ═══════════ -->
+<div class="tab-panel" id="panel-men-socks">
+  <div class="products-wrap"><div class="tab-grid" id="menSocksGrid">
+    <div class="product-card" data-category="training"><div class="card-img-wrap"><span class="card-badge">Men</span><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/product2.jpg" alt="Running Socks"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i></div><div class="card-name">Running Socks</div><div class="card-price">₹299</div></div></div>
+    <div class="product-card" data-category="training"><div class="card-img-wrap"><span class="card-badge">Men</span><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/product4.jpg" alt="Ankle Socks"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div><div class="card-name">Ankle Socks</div><div class="card-price">₹199</div></div></div>
+    <div class="product-card" data-category="training"><div class="card-img-wrap"><span class="card-badge">Men</span><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/product6.jpg" alt="Crew Socks"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i><i class="fa-regular fa-star"></i></div><div class="card-name">Crew Socks</div><div class="card-price">₹249</div></div></div>
+    <div class="product-card" data-category="training"><div class="card-img-wrap"><span class="card-badge">Men</span><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/product8.jpg" alt="Compression Socks"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i></div><div class="card-name">Compression Socks</div><div class="card-price">₹499</div></div></div>
+    <div class="product-card" data-category="lifestyle"><div class="card-img-wrap"><span class="card-badge">Men</span><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/product3.jpg" alt="No-Show Socks"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i></div><div class="card-name">No-Show Socks</div><div class="card-price">₹149</div></div></div>
+    <div class="product-card" data-category="training"><div class="card-img-wrap"><span class="card-badge">Men</span><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/product5.jpg" alt="Cushion Socks"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i></div><div class="card-name">Cushion Socks</div><div class="card-price">₹349</div></div></div>
+    <div class="product-card" data-category="training"><div class="card-img-wrap"><span class="card-badge">Men</span><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/product7.jpg" alt="Grip Socks"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i></div><div class="card-name">Grip Socks</div><div class="card-price">₹399</div></div></div>
+    <div class="product-card" data-category="lifestyle"><div class="card-img-wrap"><span class="card-badge">Men</span><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/product9.jpg" alt="Knee High Socks"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i><i class="fa-regular fa-star"></i></div><div class="card-name">Knee High Socks</div><div class="card-price">₹449</div></div></div>
+    <div class="product-card" data-category="training"><div class="card-img-wrap"><span class="card-badge">Men</span><div class="card-like"><i class="fa-regular fa-heart"></i></div><img src="images/runing product1.jpg" alt="Trail Socks"><button class="card-hover-bar card-add">Add to Cart</button></div><div class="card-body"><div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div><div class="card-name">Trail Socks</div><div class="card-price">₹599</div></div></div>
+  </div></div>
+</div>
+
+<!-- ═══════════ SEARCH OVERLAY ═══════════ -->
+<div class="search-box" id="searchBox">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="text" id="searchInput" placeholder="Search for shoes, brands…">
+  <div class="search-close-pill" id="searchClose">ESC</div>
+</div>
+<div class="search-backdrop" id="searchBackdrop"></div>
+
+<!-- ═══════════ USER PANEL ═══════════ -->
+<div class="panel" id="userPanel">
+  <div class="panel-head"><h3>Account</h3><div class="panel-close">✕</div></div>
+  <div id="accountContent"></div>
+</div>
+
+<!-- ═══════════ FAVORITES PANEL ═══════════ -->
+<div class="panel" id="favPanel">
+  <div class="panel-head"><h3>Favorites</h3><div class="panel-close">✕</div></div>
+  <div class="fav-count-box">Total: <span id="fav-count">0</span> items</div>
+  <div class="favorite-items" id="favItems"></div>
+</div>
+
+<!-- ═══════════ BACKDROP ═══════════ -->
+<div class="backdrop" id="backdrop"></div>
+
+<!-- ═══════════ CART OFFCANVAS ═══════════ -->
+<div class="offcanvas offcanvas-end" tabindex="-1" id="cartOffcanvas">
+  <div class="offcanvas-header border-bottom">
+    <h5 class="offcanvas-title">Your Bag</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
+  </div>
+  <div class="offcanvas-body" id="cartOffcanvasBody"></div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+  const menuToggle = document.getElementById("menuToggle");
+  const mobileNav  = document.getElementById("mobileNav");
+  if (menuToggle) menuToggle.addEventListener("click", () => mobileNav.classList.toggle("open"));
+
+  /* ── hero data ── */
+  const heroData = {
+    arrivals:       { eyebrow:"Just landed",       title:"New <em>Arrivals</em>",        sub:"Fresh drops, bold styles — discover the latest additions before they sell out.",       stat1:"9", stat1lbl:"New Styles",    stat2:"2025",  stat2lbl:"Collection"  },
+    bestsellers:    { eyebrow:"Most loved",        title:"Best<em>sellers</em>",         sub:"Our top-rated styles — tried, tested and loved by thousands of customers.",            stat1:"9", stat1lbl:"Top Picks",     stat2:"4.8★",  stat2lbl:"Avg. Rating" },
+    under4999:      { eyebrow:"Great value",       title:"Under <em>₹4,999</em>",        sub:"Premium comfort without the premium price — top picks all under ₹4,999.",             stat1:"9", stat1lbl:"Styles",        stat2:"₹999",  stat2lbl:"Starts from" },
+    retro:          { eyebrow:"Throwback vibes",   title:"Retro <em>Running</em>",       sub:"Classic silhouettes reborn — vintage running styles built for the modern street.",     stat1:"9", stat1lbl:"Styles",        stat2:"2025",  stat2lbl:"Season"      },
+    airmax:         { eyebrow:"Iconic cushion",    title:"Air <em>Max</em>",             sub:"Visible air, iconic style — the Air Max collection for everyday comfort.",             stat1:"9", stat1lbl:"Models",        stat2:"30+",   stat2lbl:"Yrs of Air"  },
+    dunk:           { eyebrow:"Court to street",   title:"Dunk <em>Collection</em>",     sub:"From the hardwood to the pavement — Dunks built for style and street cred.",          stat1:"9", stat1lbl:"Colorways",     stat2:"1985",  stat2lbl:"Est."        },
+    running:        { eyebrow:"Built to move",     title:"Running <em>Shoes</em>",       sub:"Engineered for speed and endurance — find your perfect running companion.",           stat1:"9", stat1lbl:"Styles",        stat2:"5★",    stat2lbl:"Rated"       },
+    cricket:        { eyebrow:"Play hard",         title:"Cricket <em>Shoes</em>",       sub:"Grip, support and speed — footwear engineered for the cricket pitch.",                stat1:"9", stat1lbl:"Styles",        stat2:"Pro",   stat2lbl:"Grade"       },
+    football:       { eyebrow:"On the pitch",      title:"Football <em>Shoes</em>",      sub:"Traction, control and power — boots built for every surface and position.",           stat1:"9", stat1lbl:"Styles",        stat2:"All",   stat2lbl:"Surfaces"    },
+    "men-running":  { eyebrow:"Men's Running",     title:"Men's <em>Running</em>",       sub:"Speed, support and style — running shoes built for men who go the distance.",         stat1:"9", stat1lbl:"Styles",        stat2:"5★",    stat2lbl:"Rated"       },
+    "men-training": { eyebrow:"Men's Training",    title:"Men's <em>Training</em>",      sub:"From the gym floor to the track — training shoes built for every rep and set.",       stat1:"9", stat1lbl:"Styles",        stat2:"Pro",   stat2lbl:"Grade"       },
+    "men-basketball":{ eyebrow:"Men's Basketball", title:"Men's <em>Basketball</em>",    sub:"Court-ready performance — basketball shoes built for explosive movement.",             stat1:"9", stat1lbl:"Styles",        stat2:"NBA",   stat2lbl:"Inspired"    },
+    "men-tshirts":  { eyebrow:"Men's Clothing",    title:"Men's <em>T-Shirts</em>",      sub:"Breathable, stylish tees for training and everyday wear.",                           stat1:"9", stat1lbl:"Styles",        stat2:"New",   stat2lbl:"Season"      },
+    "men-shorts":   { eyebrow:"Men's Clothing",    title:"Men's <em>Shorts</em>",        sub:"Lightweight shorts built for movement, comfort and street style.",                   stat1:"9", stat1lbl:"Styles",        stat2:"2025",  stat2lbl:"Season"      },
+    "men-jackets":  { eyebrow:"Men's Clothing",    title:"Men's <em>Jackets</em>",       sub:"Layer up in style — jackets built for every season and activity.",                   stat1:"9", stat1lbl:"Styles",        stat2:"All",   stat2lbl:"Weather"     },
+    "men-bags":     { eyebrow:"Men's Accessories", title:"Men's <em>Bags</em>",          sub:"Carry everything in style — backpacks, duffel bags and more.",                       stat1:"9", stat1lbl:"Styles",        stat2:"Pro",   stat2lbl:"Grade"       },
+    "men-caps":     { eyebrow:"Men's Accessories", title:"Men's <em>Caps</em>",          sub:"Top off any outfit — caps and headwear for sport and street.",                       stat1:"9", stat1lbl:"Styles",        stat2:"New",   stat2lbl:"Drops"       },
+    "men-socks":    { eyebrow:"Men's Accessories", title:"Men's <em>Socks</em>",         sub:"Performance and comfort from the ground up — socks for every run.",                  stat1:"9", stat1lbl:"Styles",        stat2:"Pro",   stat2lbl:"Grade"       }
+  };
+
+  /* ── grid map ── */
+  const gridMap = {
+    arrivals:"arrivalsGrid", bestsellers:"bestsellersGrid", under4999:"under4999Grid",
+    retro:"retroGrid", airmax:"airmaxGrid", dunk:"dunkGrid",
+    running:"runningGrid", cricket:"cricketGrid", football:"footballGrid",
+    "men-running":"menRunningGrid", "men-training":"menTrainingGrid", "men-basketball":"menBasketballGrid",
+    "men-tshirts":"menTshirtsGrid", "men-shorts":"menShortsGrid", "men-jackets":"menJacketsGrid",
+    "men-bags":"menBagsGrid", "men-caps":"menCapsGrid", "men-socks":"menSocksGrid"
+  };
+
+  let activeTab    = "arrivals";
+  let activeFilter = "all";
+
+  const urlTab = new URLSearchParams(window.location.search).get("tab");
+  if (urlTab && heroData[urlTab]) activeTab = urlTab;
+
+  function switchTab(tab) {
+    activeTab = tab;
+    document.querySelectorAll(".tab-btn").forEach(b => b.classList.toggle("active", b.dataset.tab === tab));
+    document.querySelectorAll(".tab-panel").forEach(p => p.classList.toggle("active", p.id === "panel-" + tab));
+    const d = heroData[tab];
+    if (d) {
+      document.getElementById("heroEyebrow").textContent  = d.eyebrow;
+      document.getElementById("heroTitle").innerHTML      = d.title;
+      document.getElementById("heroSub").textContent      = d.sub;
+      document.getElementById("heroStat1").textContent    = d.stat1;
+      document.getElementById("heroStat1Lbl").textContent = d.stat1lbl;
+      document.getElementById("heroStat2").textContent    = d.stat2;
+      document.getElementById("heroStat2Lbl").textContent = d.stat2lbl;
+    }
+    activeFilter = "all";
+    document.querySelectorAll(".filter-btn").forEach(b => b.classList.toggle("active", b.dataset.filter === "all"));
+    filterAndCount();
+    history.replaceState(null, "", "?tab=" + tab);
+  }
+
+  document.querySelectorAll(".tab-btn").forEach(btn => btn.addEventListener("click", () => switchTab(btn.dataset.tab)));
+  switchTab(activeTab);
+
+  function filterAndCount() {
+    const q      = document.getElementById("searchInput").value.toLowerCase().trim();
+    const gridId = gridMap[activeTab] || "arrivalsGrid";
+    const cards  = document.querySelectorAll("#" + gridId + " .product-card");
+    let visible  = 0;
+    cards.forEach(card => {
+      const cat  = card.dataset.category || "";
+      const name = card.querySelector(".card-name")?.innerText?.toLowerCase() || "";
+      const show = (activeFilter === "all" || cat === activeFilter) && (q === "" || name.includes(q));
+      card.style.display = show ? "" : "none";
+      if (show) visible++;
+    });
+    const rc = document.getElementById("resultsCount");
+    if (rc) rc.textContent = `${visible} product${visible !== 1 ? "s" : ""}`;
+    document.querySelectorAll(".no-results").forEach(e => e.remove());
+    if (visible === 0) {
+      const p = document.createElement("div");
+      p.className = "no-results";
+      p.innerHTML = `<i class="fa-regular fa-face-sad-tear"></i>No products found.`;
+      document.getElementById(gridId).appendChild(p);
+    }
+  }
+
+  document.querySelectorAll(".filter-btn").forEach(btn => {
+    btn.addEventListener("click", function () {
+      document.querySelectorAll(".filter-btn").forEach(b => b.classList.remove("active"));
+      this.classList.add("active");
+      activeFilter = this.dataset.filter;
+      filterAndCount();
+    });
+  });
+
+  document.getElementById("sortSelect").addEventListener("change", function () {
+    const val    = this.value;
+    const gridId = gridMap[activeTab] || "arrivalsGrid";
+    const grid   = document.getElementById(gridId);
+    const cards  = Array.from(grid.querySelectorAll(".product-card"));
+    cards.sort((a, b) => {
+      const na = a.querySelector(".card-name")?.innerText || "";
+      const nb = b.querySelector(".card-name")?.innerText || "";
+      const pa = parseFloat((a.querySelector(".card-price")?.innerText || "0").replace(/[^0-9.]/g,""));
+      const pb = parseFloat((b.querySelector(".card-price")?.innerText || "0").replace(/[^0-9.]/g,""));
+      if (val === "price-low")  return pa - pb;
+      if (val === "price-high") return pb - pa;
+      if (val === "name-az")    return na.localeCompare(nb);
+      return 0;
+    });
+    cards.forEach(c => grid.appendChild(c));
+  });
+
+  /* ── search ── */
+  const searchBox      = document.getElementById("searchBox");
+  const searchBackdrop = document.getElementById("searchBackdrop");
+  const searchClose    = document.getElementById("searchClose");
+  const searchInput    = document.getElementById("searchInput");
+  document.querySelector(".search-toggle").addEventListener("click", () => { searchBox.classList.add("active"); searchBackdrop.classList.add("active"); setTimeout(() => searchInput.focus(), 300); });
+  function closeSearch() { searchBox.classList.remove("active"); searchBackdrop.classList.remove("active"); searchInput.value = ""; filterAndCount(); }
+  searchClose.addEventListener("click", closeSearch);
+  searchBackdrop.addEventListener("click", closeSearch);
+  document.addEventListener("keydown", e => { if (e.key === "Escape") closeSearch(); });
+  searchInput.addEventListener("input", filterAndCount);
+
+  /* ── panels ── */
+  const backdrop  = document.getElementById("backdrop");
+  const userPanel = document.getElementById("userPanel");
+  const favPanel  = document.getElementById("favPanel");
+  function openPanel(p) { [userPanel,favPanel].forEach(x=>x.classList.remove("active")); p.classList.add("active"); backdrop.classList.add("active"); }
+  function closePanels() { [userPanel,favPanel].forEach(x=>x.classList.remove("active")); backdrop.classList.remove("active"); }
+  document.querySelector(".user-area").addEventListener("click",  () => openPanel(userPanel));
+  document.querySelector(".fav-toggle").addEventListener("click", () => openPanel(favPanel));
+  document.querySelectorAll(".panel-close").forEach(b => b.addEventListener("click", closePanels));
+  backdrop.addEventListener("click", closePanels);
+
+  /* ── account ── */
+  const user = JSON.parse(localStorage.getItem("user"));
+  const accountContent = document.getElementById("accountContent");
+  if (user) {
+    document.getElementById("nav-username").textContent = user.name;
+    if (accountContent) accountContent.innerHTML = `<p style="margin-bottom:16px;font-size:14px;color:var(--ink-2)">Welcome, ${user.name}</p><button onclick="localStorage.removeItem('user');location.reload()">Logout</button>`;
+  } else {
+    if (accountContent) accountContent.innerHTML = `<a href="register.html"><button>Create Account</button></a>`;
+  }
+
+  /* ── cart ── */
+  let cart = JSON.parse(localStorage.getItem("cart")) || [];
+  const cartCount = document.getElementById("cartcount");
+  function updateCartCount() { const t=cart.reduce((s,i)=>s+i.qty,0); if(cartCount) cartCount.textContent=t; localStorage.setItem("cart",JSON.stringify(cart)); }
+  updateCartCount();
+  document.querySelectorAll(".card-add").forEach(btn => {
+    btn.addEventListener("click", e => {
+      e.stopPropagation();
+      const card=btn.closest(".product-card");
+      const name=card.querySelector(".card-name")?.innerText.trim();
+      const price=card.querySelector(".card-price")?.innerText.trim();
+      const img=card.querySelector("img")?.src;
+      if (!name||!price) return;
+      const ex=cart.find(i=>i.name===name);
+      if (ex) ex.qty++; else cart.push({name,price,img,qty:1});
+      updateCartCount();
+    });
+  });
+
+  const cartBody = document.getElementById("cartOffcanvasBody");
+  function showCart() {
+    if (!cartBody) return;
+    if (!cart.length) { cartBody.innerHTML=`<div style="text-align:center;padding:60px 0;color:var(--ink-3)"><i class="fa-solid fa-bag-shopping" style="font-size:32px;margin-bottom:12px;display:block;opacity:.3"></i><p>Your bag is empty.</p></div>`; return; }
+    let total=0, html="";
+    cart.forEach((item,idx)=>{
+      const p=parseFloat(item.price.replace(/[^0-9.]/g,"")); const t=p*item.qty; total+=t;
+      html+=`<div style="display:flex;gap:14px;margin-bottom:20px;padding-bottom:20px;border-bottom:1px solid var(--border)"><img src="${item.img}" style="width:68px;height:68px;object-fit:cover;flex-shrink:0"><div style="flex:1"><p style="font-size:13px;font-weight:500;margin-bottom:4px">${item.name}</p><p style="font-size:12px;color:var(--ink-3);margin-bottom:10px">₹${p} × ${item.qty} = <strong>₹${t.toFixed(0)}</strong></p><div style="display:flex;gap:8px;align-items:center"><button class="btn btn-outline-secondary btn-sm qty-minus" data-i="${idx}">−</button><span style="font-size:13px;font-weight:500">${item.qty}</span><button class="btn btn-outline-secondary btn-sm qty-plus" data-i="${idx}">+</button><button class="btn btn-sm ms-2 remove-btn" data-i="${idx}" style="background:var(--ink);color:#fff"><i class="fa-solid fa-trash"></i></button></div></div></div>`;
+    });
+    html+=`<div style="display:flex;justify-content:space-between;font-size:15px;font-weight:500;padding-top:8px;border-top:1px solid var(--border)"><span>Subtotal</span><span>₹${total.toFixed(0)}</span></div><button onclick="window.location.href='checkout.html'" style="width:100%;margin-top:16px;background:var(--ink);color:#fff;border:none;padding:14px;font-family:var(--sans);font-size:13px;letter-spacing:.8px;text-transform:uppercase;cursor:pointer">Checkout</button>`;
+    cartBody.innerHTML=html;
+    cartBody.querySelectorAll(".qty-plus").forEach(b=>b.addEventListener("click",()=>{cart[+b.dataset.i].qty++;updateCartCount();showCart();}));
+    cartBody.querySelectorAll(".qty-minus").forEach(b=>b.addEventListener("click",()=>{const i=+b.dataset.i;if(cart[i].qty>1)cart[i].qty--;else cart.splice(i,1);updateCartCount();showCart();}));
+    cartBody.querySelectorAll(".remove-btn").forEach(b=>b.addEventListener("click",()=>{cart.splice(+b.dataset.i,1);updateCartCount();showCart();}));
+  }
+  document.querySelector(".cart-toggle").addEventListener("click",()=>{showCart();new bootstrap.Offcanvas(document.getElementById("cartOffcanvas")).show();});
+
+  /* ── favorites ── */
+  let favs = JSON.parse(localStorage.getItem("favorites")) || [];
+  const favCount = document.getElementById("fav-count");
+  const favItems = document.getElementById("favItems");
+  function renderFavs() {
+    if (!favItems) return;
+    localStorage.setItem("favorites",JSON.stringify(favs));
+    if (!favs.length) { favItems.innerHTML=`<p class="empty-fav">No favorites yet.</p>`; if(favCount) favCount.textContent=0; return; }
+    favItems.innerHTML="";
+    favs.forEach((item,i)=>{ const d=document.createElement("div"); d.className="fav-item"; d.innerHTML=`<img src="${item.img}" alt="${item.name}"><div class="fav-info"><h4>${item.name}</h4><p>${item.price}</p><button class="btn-remove-fav" data-i="${i}">Remove</button></div>`; favItems.appendChild(d); });
+    if (favCount) favCount.textContent=favs.length;
+    favItems.querySelectorAll(".btn-remove-fav").forEach(btn=>btn.addEventListener("click",function(){const rm=favs[+this.dataset.i];favs.splice(+this.dataset.i,1);renderFavs();document.querySelectorAll(".card-like i").forEach(icon=>{if(icon.closest(".product-card")?.querySelector(".card-name")?.innerText===rm.name){icon.classList.remove("liked","fa-solid");icon.classList.add("fa-regular");}});}));
+  }
+  favs.forEach(item=>{ document.querySelectorAll(".product-card").forEach(card=>{ if(card.querySelector(".card-name")?.innerText.trim()===item.name){const icon=card.querySelector(".card-like i");if(icon){icon.classList.add("liked","fa-solid");icon.classList.remove("fa-regular");}}}); });
+  renderFavs();
+  document.querySelectorAll(".card-like").forEach(el=>{ el.addEventListener("click",function(e){ e.stopPropagation(); const card=this.closest(".product-card");const name=card.querySelector(".card-name")?.innerText.trim();const price=card.querySelector(".card-price")?.innerText.trim();const img=card.querySelector("img")?.src;const icon=this.querySelector("i"); if(!icon.classList.contains("liked")){icon.classList.add("liked","fa-solid");icon.classList.remove("fa-regular");favs.push({name,price,img});}else{icon.classList.remove("liked","fa-solid");icon.classList.add("fa-regular");favs=favs.filter(f=>f.name!==name);}renderFavs();}); });
+
+  /* ── card click → detail ── */
+  document.querySelectorAll("#arrivalsGrid .product-card").forEach((card,i)=>{ card.addEventListener("click",e=>{if(e.target.closest(".card-add")||e.target.closest(".card-like"))return;window.location.href=`product.html?id=${100+i+1}`;}); });
+  document.querySelectorAll("#bestsellersGrid .product-card").forEach((card,i)=>{ card.addEventListener("click",e=>{if(e.target.closest(".card-add")||e.target.closest(".card-like"))return;window.location.href=`product.html?id=${i+1}`;}); });
+});
+</script>
+</body>
+</html>

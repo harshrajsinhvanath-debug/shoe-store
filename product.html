@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Product Detail | PORTO</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="product.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<!-- NAVBAR -->
+<header class="navbar">
+    <a href="index.html" class="logo">PORTO</a>
+    <div class="nav-right">
+        <div class="cart-icon" style="cursor:pointer;">
+            <i class="fa-solid fa-bag-shopping icon"></i>
+            <span class="cart-count" id="cartcount">0</span>
+        </div>
+    </div>
+</header>
+
+<!-- BACK BUTTON -->
+<a href="javascript:history.back()" class="back-btn">
+    <i class="fa-solid fa-arrow-left"></i> Back
+</a>
+
+<!-- PRODUCT DETAIL -->
+<section class="product-detail-section" id="productDetail">
+    <div class="product-detail-img">
+        <img id="detailImg" src="" alt="">
+    </div>
+    <div class="product-detail-info">
+        <p class="detail-category" id="detailCategory"></p>
+        <h1 id="detailTitle"></h1>
+        <p class="detail-price" id="detailPrice"></p>
+        <p class="detail-desc" id="detailDesc"></p>
+        <button class="add-to-cart-btn" id="addToCartBtn">
+            <i class="fa-solid fa-bag-shopping"></i> &nbsp; Add to Cart
+        </button>
+        <div class="cart-added-msg" id="cartAddedMsg">
+            ✅ Added to cart successfully!
+        </div>
+    </div>
+</section>
+
+<script src="product.js"></script>
+</body>
+</html>

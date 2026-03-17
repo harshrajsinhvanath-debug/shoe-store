@@ -1,14 +1,493 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
-    <title>first projeact</title>
-    <h1>front page</h1>
-    <p></p>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Porto — Shoe Store</title>
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+
+  <!-- Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+
+  <!-- Site Styles -->
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    
+
+  <!-- ═══════════ ANNOUNCEMENT BAR ═══════════ -->
+  <div class="ann-bar">
+    <div class="ann-track">
+      <span>🔥 New Arrivals Just Dropped</span>
+      <span class="ann-dot"></span>
+      <span>⚡ Free Shipping on Orders Above ₹999</span>
+      <span class="ann-dot"></span>
+      <span>🏆 Top Rated Shoes of 2025</span>
+      <span class="ann-dot"></span>
+      <span>🎁 Use Code PORTO10 for 10% Off</span>
+      <span class="ann-dot"></span>
+      <!-- duplicate for seamless loop -->
+      <span>🔥 New Arrivals Just Dropped</span>
+      <span class="ann-dot"></span>
+      <span>⚡ Free Shipping on Orders Above ₹999</span>
+      <span class="ann-dot"></span>
+      <span>🏆 Top Rated Shoes of 2025</span>
+      <span class="ann-dot"></span>
+      <span>🎁 Use Code PORTO10 for 10% Off</span>
+    </div>
+  </div>
+
+  <!-- ═══════════ NAVBAR ═══════════ -->
+  <header class="site-nav" id="siteNav">
+    <a href="#" class="nav-logo">PORTO</a>
+
+    <nav class="nav-center">
+
+      <!-- New & Featured -->
+      <div class="nav-item">
+        <a href="#featured">New &amp; Featured</a>
+        <div class="mega">
+          <div class="mega-col">
+            <h4>Featured</h4>
+            <a href="Products.html?tab=arrivals">New Arrivals</a>
+            <a href="Products.html?tab=bestsellers">Bestsellers</a>
+            <a href="Products.html?tab=under4999">Under ₹4999</a>
+          </div>
+          <div class="mega-col">
+            <h4>Trending</h4>
+            <a href="Products.html?tab=retro">Retro Running</a>
+            <a href="Products.html?tab=airmax">Air Max</a>
+            <a href="Products.html?tab=dunk">Dunk</a>
+          </div>
+          <div class="mega-col">
+            <h4>Sport</h4>
+            <a href="Products.html?tab=running">Running</a>
+            <a href="Products.html?tab=cricket">Cricket</a>
+            <a href="Products.html?tab=football">Football</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Men -->
+    <div class="nav-item">
+  <a href="#">Men</a>
+  <div class="mega">
+    <div class="mega-col">
+      <h4>Shoes</h4>
+      <a href="Products.html?tab=men-running">Running</a>
+      <a href="Products.html?tab=men-training">Training</a>
+      <a href="Products.html?tab=men-basketball">Basketball</a>
+    </div>
+    <div class="mega-col">
+      <h4>Clothing</h4>
+      <a href="Products.html?tab=men-tshirts">T-Shirts</a>
+      <a href="Products.html?tab=men-shorts">Shorts</a>
+      <a href="Products.html?tab=men-jackets">Jackets</a>
+    </div>
+    <div class="mega-col">
+      <h4>Accessories</h4>
+      <a href="Products.html?tab=men-bags">Bags</a>
+      <a href="Products.html?tab=men-caps">Caps</a>
+      <a href="Products.html?tab=men-socks">Socks</a>
+    </div>
+  </div>
+</div>
+
+      <!-- Women -->
+      <div class="nav-item">
+        <a href="#">Women</a>
+        <div class="mega">
+          <div class="mega-col">
+            <h4>Shoes</h4>
+            <a href="Products.html?tab=running">Running</a>
+            <a href="Products.html?tab=under4999">Lifestyle</a>
+            <a href="Products.html?tab=running">Training</a>
+          </div>
+          <div class="mega-col">
+            <h4>Clothing</h4>
+            <a href="#">Leggings</a>
+            <a href="#">Sports Bras</a>
+            <a href="#">Hoodies</a>
+          </div>
+          <div class="mega-col">
+            <h4>Accessories</h4>
+            <a href="#">Backpacks</a>
+            <a href="#">Water Bottles</a>
+            <a href="#">Caps</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Kids -->
+      <div class="nav-item">
+        <a href="#">Kids</a>
+        <div class="mega">
+          <div class="mega-col">
+            <h4>Boys</h4>
+            <a href="Products.html?tab=running">Shoes</a>
+            <a href="#">Clothing</a>
+            <a href="#">Accessories</a>
+          </div>
+          <div class="mega-col">
+            <h4>Girls</h4>
+            <a href="Products.html?tab=under4999">Shoes</a>
+            <a href="#">Clothing</a>
+            <a href="#">Accessories</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Jordan -->
+      <div class="nav-item">
+        <a href="#">Jordan</a>
+        <div class="mega">
+          <div class="mega-col">
+            <h4>Collections</h4>
+            <a href="Products.html?tab=dunk">Air Jordan 1</a>
+            <a href="Products.html?tab=dunk">Air Jordan 4</a>
+            <a href="Products.html?tab=retro">Retro</a>
+          </div>
+          <div class="mega-col">
+            <h4>Shop</h4>
+            <a href="Products.html?tab=dunk">Shoes</a>
+            <a href="#">Clothing</a>
+            <a href="#">Accessories</a>
+          </div>
+        </div>
+      </div>
+
+    </nav>
+
+    <div class="nav-right">
+      <i class="fa-solid fa-magnifying-glass nav-icon search-toggle"></i>
+      <div class="user-area nav-icon">
+        <i class="fa-regular fa-user"></i>
+        <span id="nav-username"></span>
+      </div>
+      <i class="fa-regular fa-heart nav-icon fav-toggle"></i>
+      <div class="cart-icon nav-icon cart-toggle">
+        <i class="fa-solid fa-bag-shopping"></i>
+        <span class="cart-badge" id="cartcount">0</span>
+      </div>
+      <i class="fa-solid fa-bars menu-toggle" id="menuToggle"></i>
+    </div>
+  </header>
+
+  <!-- Mobile Nav -->
+  <div class="nav-links-mobile" id="mobileNav">
+    <a href="Products.html?tab=arrivals">New Arrivals</a>
+    <a href="Products.html?tab=bestsellers">Bestsellers</a>
+    <a href="Products.html?tab=running">Running</a>
+    <a href="Products.html?tab=dunk">Jordan</a>
+    <a href="Products.html?tab=under4999">Under ₹4999</a>
+  </div>
+
+  <!-- ═══════════ HERO ═══════════ -->
+  <section class="hero" id="home">
+    <div class="hero-left">
+      <p class="hero-eyebrow">New Collection — 2026</p>
+      <h1 class="hero-title">Move in<br><em>Pure Style</em></h1>
+      <p class="hero-sub">Premium footwear engineered for performance and crafted for the streets.</p>
+      <div class="hero-actions">
+        <button class="btn-primary shop-now-btn">
+          Shop Now <i class="fa-solid fa-arrow-right" style="font-size:11px"></i>
+        </button>
+        <a href="Products.html?tab=arrivals" class="btn-ghost">New Arrivals</a>
+      </div>
+      <div class="hero-stat-row">
+        <div>
+          <div class="hero-stat-val">200+</div>
+          <div class="hero-stat-lbl">Styles</div>
+        </div>
+        <div>
+          <div class="hero-stat-val">50k+</div>
+          <div class="hero-stat-lbl">Customers</div>
+        </div>
+        <div>
+          <div class="hero-stat-val">4.9★</div>
+          <div class="hero-stat-lbl">Rating</div>
+        </div>
+      </div>
+    </div>
+    <div class="hero-right">
+      <img src="images/hero2.jpg" alt="Hero Shoe" class="hero-right-img">
+      <div class="hero-right-overlay"></div>
+      <div class="hero-tag">
+        <div class="hero-tag-dot"></div>
+        <span class="hero-tag-text">Zoom Pegasus — ₹1,500</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════ CATEGORY STRIP ═══════════ -->
+  <div class="strip">
+    <div class="strip-track">
+      <span class="strip-item">Running <span class="strip-dot"></span></span>
+      <span class="strip-item">Training <span class="strip-dot"></span></span>
+      <span class="strip-item">Lifestyle <span class="strip-dot"></span></span>
+      <span class="strip-item">Performance <span class="strip-dot"></span></span>
+      <span class="strip-item">New Arrivals <span class="strip-dot"></span></span>
+      <span class="strip-item">Jordan <span class="strip-dot"></span></span>
+      <!-- duplicate for seamless loop -->
+      <span class="strip-item">Running <span class="strip-dot"></span></span>
+      <span class="strip-item">Training <span class="strip-dot"></span></span>
+      <span class="strip-item">Lifestyle <span class="strip-dot"></span></span>
+      <span class="strip-item">Performance <span class="strip-dot"></span></span>
+      <span class="strip-item">New Arrivals <span class="strip-dot"></span></span>
+      <span class="strip-item">Jordan <span class="strip-dot"></span></span>
+    </div>
+  </div>
+
+  <!-- ═══════════ FEATURED PRODUCTS ═══════════ -->
+  <section class="featured" id="featured">
+    <div class="section-header">
+      <div>
+        <p class="section-eyebrow">Curated picks</p>
+        <h2 class="section-title">Featured Products</h2>
+      </div>
+      <div class="section-actions">
+        <select class="sort-select" id="sortSelect">
+          <option value="">Sort By</option>
+          <option value="price-low">Price: Low → High</option>
+          <option value="price-high">Price: High → Low</option>
+          <option value="name-az">Name: A → Z</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="products-grid" id="productsGrid">
+
+      <div class="product-card">
+        <div class="card-img-wrap">
+          <span class="card-badge">Sale</span>
+          <div class="card-like"><i class="fa-regular fa-heart"></i></div>
+          <img src="images/runing product1.jpg" alt="Zoom Pegasus">
+          <button class="card-hover-bar card-add">Add to Cart</button>
+        </div>
+        <div class="card-body">
+          <div class="card-rating">
+            <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+            <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+            <i class="fa-regular fa-star"></i>
+          </div>
+          <div class="card-name">Zoom Pegasus</div>
+          <div class="card-price">₹1,500</div>
+        </div>
+      </div>
+
+      <div class="product-card">
+        <div class="card-img-wrap">
+          <span class="card-badge">Sale</span>
+          <div class="card-like"><i class="fa-regular fa-heart"></i></div>
+          <img src="images/product2.jpg" alt="React Infinity">
+          <button class="card-hover-bar card-add">Add to Cart</button>
+        </div>
+        <div class="card-body">
+          <div class="card-rating">
+            <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+            <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+            <i class="fa-solid fa-star"></i>
+          </div>
+          <div class="card-name">React Infinity</div>
+          <div class="card-price">₹1,900</div>
+        </div>
+      </div>
+
+      <div class="product-card">
+        <div class="card-img-wrap">
+          <div class="card-like"><i class="fa-regular fa-heart"></i></div>
+          <img src="images/product3.jpg" alt="Revolution 6">
+          <button class="card-hover-bar card-add">Add to Cart</button>
+        </div>
+        <div class="card-body">
+          <div class="card-rating">
+            <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+            <i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i>
+            <i class="fa-regular fa-star"></i>
+          </div>
+          <div class="card-name">Revolution 6</div>
+          <div class="card-price">₹1,700</div>
+        </div>
+      </div>
+
+      <div class="product-card">
+        <div class="card-img-wrap">
+          <div class="card-like"><i class="fa-regular fa-heart"></i></div>
+          <img src="images/product4.jpg" alt="Zoom Fly 5">
+          <button class="card-hover-bar card-add">Add to Cart</button>
+        </div>
+        <div class="card-body">
+          <div class="card-rating">
+            <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+            <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+            <i class="fa-solid fa-star"></i>
+          </div>
+          <div class="card-name">Zoom Fly 5</div>
+          <div class="card-price">₹1,400</div>
+        </div>
+      </div>
+
+      <div class="product-card">
+        <div class="card-img-wrap">
+          <div class="card-like"><i class="fa-regular fa-heart"></i></div>
+          <img src="images/product5.jpg" alt="Air Max Pro">
+          <button class="card-hover-bar card-add">Add to Cart</button>
+        </div>
+        <div class="card-body">
+          <div class="card-rating">
+            <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+            <i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i>
+            <i class="fa-regular fa-star"></i>
+          </div>
+          <div class="card-name">Air Max Pro</div>
+          <div class="card-price">₹1,100</div>
+        </div>
+      </div>
+
+      <div class="product-card">
+        <div class="card-img-wrap">
+          <div class="card-like"><i class="fa-regular fa-heart"></i></div>
+          <img src="images/product6.jpg" alt="Ultra Boost X">
+          <button class="card-hover-bar card-add">Add to Cart</button>
+        </div>
+        <div class="card-body">
+          <div class="card-rating">
+            <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+            <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+            <i class="fa-regular fa-star"></i>
+          </div>
+          <div class="card-name">Ultra Boost X</div>
+          <div class="card-price">₹1,600</div>
+        </div>
+      </div>
+
+      <div class="product-card">
+        <div class="card-img-wrap">
+          <div class="card-like"><i class="fa-regular fa-heart"></i></div>
+          <img src="images/product7.jpg" alt="Speed Runner">
+          <button class="card-hover-bar card-add">Add to Cart</button>
+        </div>
+        <div class="card-body">
+          <div class="card-rating">
+            <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+            <i class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i>
+            <i class="fa-regular fa-star"></i>
+          </div>
+          <div class="card-name">Speed Runner</div>
+          <div class="card-price">₹6,500</div>
+        </div>
+      </div>
+
+      <div class="product-card">
+        <div class="card-img-wrap">
+          <div class="card-like"><i class="fa-regular fa-heart"></i></div>
+          <img src="images/product8.jpg" alt="Elite Trainer">
+          <button class="card-hover-bar card-add">Add to Cart</button>
+        </div>
+        <div class="card-body">
+          <div class="card-rating">
+            <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+            <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+            <i class="fa-regular fa-star"></i>
+          </div>
+          <div class="card-name">Elite Trainer</div>
+          <div class="card-price">₹1,300</div>
+        </div>
+      </div>
+
+      <div class="product-card">
+        <div class="card-img-wrap">
+          <div class="card-like"><i class="fa-regular fa-heart"></i></div>
+          <img src="images/product9.jpg" alt="Lite Runner">
+          <button class="card-hover-bar card-add">Add to Cart</button>
+        </div>
+        <div class="card-body">
+          <div class="card-rating">
+            <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+            <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+            <i class="fa-regular fa-star"></i>
+          </div>
+          <div class="card-name">Lite Runner</div>
+          <div class="card-price">₹2,500</div>
+        </div>
+      </div>
+
+      <div class="product-card">
+        <div class="card-img-wrap">
+          <div class="card-like"><i class="fa-regular fa-heart"></i></div>
+          <img src="images/product10.jpg" alt="Road Running 6">
+          <button class="card-hover-bar card-add">Add to Cart</button>
+        </div>
+        <div class="card-body">
+          <div class="card-rating">
+            <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+            <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+            <i class="fa-regular fa-star"></i>
+          </div>
+          <div class="card-name">Road Running 6</div>
+          <div class="card-price">₹1,900</div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ═══════════ BANNER ═══════════ -->
+  <section class="banner" id="banner">
+    <img src="images/banner.jpg" alt="Banner" class="banner-img">
+    <div class="banner-inner">
+      <h2>Adidas Ultra Boost</h2>
+      <p>Experience unmatched comfort and energy return.</p>
+      <button>Shop Now</button>
+    </div>
+  </section>
+
+  <!-- ═══════════ SEARCH OVERLAY ═══════════ -->
+  <div class="search-box" id="searchBox">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <input type="text" id="searchInput" placeholder="Search for shoes, brands…">
+    <div class="search-close-pill" id="searchClose">ESC</div>
+  </div>
+  <div class="search-backdrop" id="searchBackdrop"></div>
+
+  <!-- ═══════════ USER PANEL ═══════════ -->
+  <div class="panel" id="userPanel">
+    <div class="panel-head">
+      <h3>Account</h3>
+      <div class="panel-close">✕</div>
+    </div>
+    <div id="accountContent"></div>
+  </div>
+
+  <!-- ═══════════ FAVORITES PANEL ═══════════ -->
+  <div class="panel" id="favPanel">
+    <div class="panel-head">
+      <h3>Favorites</h3>
+      <div class="panel-close">✕</div>
+    </div>
+    <div class="fav-count-box">Total: <span id="fav-count">0</span> items</div>
+    <div class="favorite-items" id="favItems"></div>
+  </div>
+
+  <!-- ═══════════ BACKDROP ═══════════ -->
+  <div class="backdrop" id="backdrop"></div>
+
+  <!-- ═══════════ CART OFFCANVAS ═══════════ -->
+  <div class="offcanvas offcanvas-end" tabindex="-1" id="cartOffcanvas">
+    <div class="offcanvas-header border-bottom">
+      <h5 class="offcanvas-title">Your Bag</h5>
+      <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
+    </div>
+    <div class="offcanvas-body" id="cartOffcanvasBody"></div>
+  </div>
+
+  <!-- ═══════════ SCRIPTS ═══════════ -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="script.js"></script>
+
 </body>
 </html>
