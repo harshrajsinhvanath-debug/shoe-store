@@ -551,22 +551,22 @@ a { text-decoration: none; color: inherit; }
 ═══════════════════════════════════════════ */
 .banner {
   position: relative;
-  width: 100%;
+  width: 100vw;
   height: 56vh;
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
   background: #0d0d0d;
+  margin-left: calc(-50vw + 50%);
 }
 .banner-img {
   position: absolute;
-  top: 0;
-  left: 0;
+  inset: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: center;
+  object-position: center 30%;
   display: block;
   z-index: 0;
 }
@@ -823,4 +823,309 @@ a { text-decoration: none; color: inherit; }
   .hero-left { padding: 40px 24px; }
   .featured { padding: 40px 16px; }
   .search-box { padding: 0 20px; }
+}
+
+/* ═══════════════════════════════════════════
+   FOOTER
+═══════════════════════════════════════════ */
+.site-footer {
+  background: #ffffff;
+  border-top: 1px solid var(--border);
+  margin-top: 0;
+}
+
+.footer-inner {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 64px 80px 0;
+}
+
+.footer-top {
+  display: grid;
+  grid-template-columns: 1.6fr 1fr 1fr 1.2fr;
+  gap: 48px;
+}
+
+/* Brand */
+.footer-logo {
+  font-family: var(--serif);
+  font-size: 22px;
+  letter-spacing: 3px;
+  color: var(--ink);
+  margin-bottom: 14px;
+}
+
+.footer-tagline {
+  font-size: 13px;
+  color: var(--ink-3);
+  line-height: 1.8;
+  font-weight: 300;
+  max-width: 240px;
+}
+
+/* Columns */
+.footer-heading {
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-bottom: 18px;
+}
+
+.footer-col ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.footer-col ul li {
+  margin-bottom: 10px;
+}
+
+.footer-col ul li a {
+  font-size: 13px;
+  color: var(--ink-2);
+  text-decoration: none;
+  transition: color .2s;
+}
+
+.footer-col ul li a:hover {
+  color: var(--ink);
+}
+
+/* Contact */
+.footer-contact {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.footer-contact li {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 12px;
+  font-size: 13px;
+  color: var(--ink-2);
+}
+
+.footer-contact li i {
+  color: var(--accent-dk);
+  font-size: 13px;
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+
+.footer-contact li a {
+  color: var(--ink-2);
+  text-decoration: none;
+  transition: color .2s;
+}
+
+.footer-contact li a:hover {
+  color: var(--ink);
+}
+
+/* Divider */
+.footer-divider {
+  height: 1px;
+  background: var(--border);
+  margin: 48px 0 0;
+}
+
+/* Bottom bar */
+.footer-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 0;
+  gap: 20px;
+}
+
+.footer-copy {
+  font-size: 12px;
+  color: var(--ink-3);
+  letter-spacing: .3px;
+}
+
+.footer-bottom-links {
+  display: flex;
+  gap: 24px;
+}
+
+.footer-bottom-links a {
+  font-size: 12px;
+  color: var(--ink-3);
+  text-decoration: none;
+  transition: color .2s;
+}
+
+.footer-bottom-links a:hover {
+  color: var(--ink);
+}
+
+/* Footer responsive */
+@media (max-width: 1024px) {
+  .footer-inner { padding: 48px 40px 0; }
+  .footer-top { grid-template-columns: 1fr 1fr; gap: 36px; }
+}
+
+@media (max-width: 600px) {
+  .footer-inner { padding: 40px 24px 0; }
+  .footer-top { grid-template-columns: 1fr; gap: 28px; }
+  .footer-bottom { flex-direction: column; align-items: flex-start; gap: 12px; }
+  .footer-bottom-links { flex-wrap: wrap; gap: 16px; }
+}
+
+/* ═══════════════════════════════════════════
+   FOOTER
+═══════════════════════════════════════════ */
+.site-footer {
+  background: #ffffff;
+  border-top: 1px solid var(--border);
+  font-family: var(--sans);
+}
+
+.footer-inner {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 64px 80px 32px;
+}
+
+/* ── top row ── */
+.footer-top {
+  display: grid;
+  grid-template-columns: 1.6fr 1fr 1fr 1.4fr;
+  gap: 48px;
+  margin-bottom: 48px;
+}
+
+/* ── brand ── */
+.footer-logo {
+  font-family: var(--serif);
+  font-size: 22px;
+  letter-spacing: 3px;
+  color: var(--ink);
+  margin-bottom: 14px;
+}
+
+.footer-tagline {
+  font-size: 13px;
+  color: var(--ink-3);
+  line-height: 1.8;
+  font-weight: 300;
+  max-width: 220px;
+}
+
+/* ── columns ── */
+.footer-heading {
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-bottom: 18px;
+}
+
+.footer-col ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.footer-col ul li {
+  margin-bottom: 10px;
+}
+
+.footer-col ul li a {
+  font-size: 14px;
+  color: var(--ink-2);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.footer-col ul li a:hover {
+  color: var(--ink);
+}
+
+/* ── contact list ── */
+.footer-contact li {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 13.5px;
+  color: var(--ink-2);
+  margin-bottom: 12px !important;
+}
+
+.footer-contact li i {
+  color: var(--accent-dk);
+  font-size: 13px;
+  margin-top: 3px;
+  flex-shrink: 0;
+}
+
+.footer-contact li a {
+  color: var(--ink-2);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.footer-contact li a:hover {
+  color: var(--ink);
+}
+
+.footer-contact li span {
+  color: var(--ink-2);
+}
+
+/* ── divider ── */
+.footer-divider {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin-bottom: 28px;
+}
+
+/* ── bottom row ── */
+.footer-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.footer-copy {
+  font-size: 12px;
+  color: var(--ink-3);
+  letter-spacing: 0.3px;
+}
+
+.footer-bottom-links {
+  display: flex;
+  gap: 24px;
+}
+
+.footer-bottom-links a {
+  font-size: 12px;
+  color: var(--ink-3);
+  text-decoration: none;
+  transition: color 0.2s;
+  letter-spacing: 0.3px;
+}
+
+.footer-bottom-links a:hover {
+  color: var(--ink);
+}
+
+/* ── responsive ── */
+@media (max-width: 1024px) {
+  .footer-inner { padding: 48px 40px 28px; }
+  .footer-top { grid-template-columns: 1fr 1fr; gap: 36px; }
+}
+
+@media (max-width: 640px) {
+  .footer-inner { padding: 40px 24px 24px; }
+  .footer-top { grid-template-columns: 1fr; gap: 28px; }
+  .footer-bottom { flex-direction: column; align-items: flex-start; gap: 12px; }
 }
