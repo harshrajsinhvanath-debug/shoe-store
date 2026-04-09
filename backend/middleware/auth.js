@@ -1,42 +1,38 @@
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 
-// Secret key for JWT
-const JWT_SECRET = 'your-secret-key-change-this-in-production-12345';
-
-// Middleware to verify JWT token
 const authMiddleware = async (req, res, next) => {
   try {
-    const token = req.header('Authorization')?.replace('Bearer ', '');
-    
-    if (!token) {
-      return res.status(401).json({ message: 'No token, authorization denied' });
+    const authHeader = req.headers.authorization;
+
+    console.log("AUTH HEADER:", authHeader); // DEBUG
+
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+      return res.status(401).json({ message: 'No token provided' });
     }
 
-    const decoded = jwt.verify(token, JWT_SECRET);
-    const user = await User.findById(decoded.userId).select('-password');
-    
+    const token = authHeader.split(" ")[1];
+
+    console.log("TOKEN RECEIVED:", token); // DEBUG
+
+    console.log("VERIFY SECRET:", process.env.JWT_SECRET);
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+    console.log("DECODED:", decoded); // DEBUG
+
+    const user = await User.findById(decoded.id).select('-password');
+
     if (!user) {
       return res.status(401).json({ message: 'User not found' });
     }
 
     req.user = user;
     next();
+
   } catch (error) {
+    console.log("AUTH ERROR:", error.message); // 🔥 IMPORTANT
     res.status(401).json({ message: 'Token is not valid' });
   }
 };
 
-// Alias for protect (to match your routes)
-const protect = authMiddleware;
-
-// Middleware to check if user is admin
-const adminMiddleware = (req, res, next) => {
-  if (req.user && req.user.role === 'admin') {
-    next();
-  } else {
-    res.status(403).json({ message: 'Access denied. Admin only.' });
-  }
-};
-
-module.exports = { authMiddleware, protect, adminMiddleware, JWT_SECRET };
+module.exports = { protect: authMiddleware };

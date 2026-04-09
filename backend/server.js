@@ -1,4 +1,5 @@
 require('dotenv').config();
+console.log("JWT_SECRET:", process.env.JWT_SECRET);
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
@@ -47,6 +48,7 @@ const PORT = process.env.PORT || 6900;
 app.listen(PORT, () => {
   console.log(`✓ Server is running on http://localhost:${PORT}`);
   console.log(`✓ Auth page: http://localhost:${PORT}/auth.html`);
+  console.log("JWT_SECRET:", process.env.JWT_SECRET);
 });
 
 module.exports = app;
